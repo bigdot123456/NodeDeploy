@@ -14,6 +14,7 @@ from MATRIXStringTools import *
 # from PyQt5.QtCore import pyqtSlot
 from Ui_MATRIXNode import Ui_MainWindow
 from MATRIXFileTools import *
+from MATRIXGetURLContent import *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
@@ -32,6 +33,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     select_VM = "Miner"
     select_actor = "SuperNode"
     NodeRootDir=f".{os.sep}"
+    MainFile="gman"
+
+    url = 'https://www.matrix.io/downloads/'
 
     # self.ValidatorradioButton
     # self.FollowSuperNode
@@ -437,7 +441,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         # TODO: not implemented yet
         #raise NotImplementedError
+        rootdir = os.getcwd()
+        workdir=f".{os.sep}work"
+        os.chdir(workdir)
+        cmd = f".{os.sep}gman --datadir ./chaindata  init MANGenesis.json"
+        print(f"Init Gman with command:\ncd {workdir};\n.{os.sep}gman --datadir ./chaindata  init MANGenesis.json \n\n")
+        child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        outs, errs = child1.communicate()
 
+        # output=str(outs).decode('string_escape')
+        output = str(outs, 'utf-8')
+        print(f"cmd execute result:\n{output}")
+
+        self.cmdLogText.setPlainText(cmd)
+        self.listWidget.addItem(cmd)
+        self.NodeBootLogText.append(output)
+        os.chdir(rootdir)
 
     @pyqtSlot()
     def on_GenerateRandomAccountAddress_2_clicked(self):
@@ -546,7 +565,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        # raise NotImplementedError
+        rootdir = os.getcwd()
+        print(f"We will download all file in {rootdir}{os.sep}Download/ Directory")
+        self.MainFile = autoDownloadGman(self.url)
 
     @pyqtSlot()
     def on_CompileGAN_clicked(self):
