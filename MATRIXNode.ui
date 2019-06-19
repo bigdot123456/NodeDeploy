@@ -523,7 +523,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>40</y>
+       <y>50</y>
        <width>151</width>
        <height>51</height>
       </rect>
@@ -540,7 +540,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>101</y>
+       <y>100</y>
        <width>151</width>
        <height>41</height>
       </rect>
@@ -558,21 +558,22 @@
        <x>10</x>
        <y>1</y>
        <width>151</width>
-       <height>41</height>
+       <height>51</height>
       </rect>
      </property>
      <property name="toolTip">
       <string>生成命令行，并启动节点</string>
      </property>
      <property name="text">
-      <string>自动化部署观察节点</string>
+      <string>自动化部署观察节点
+(无需账户）</string>
      </property>
     </widget>
     <widget class="QPushButton" name="StopNode">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>141</y>
+       <y>140</y>
        <width>151</width>
        <height>41</height>
       </rect>
@@ -997,7 +998,7 @@
 工作路径</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_8">
+    <widget class="QLabel" name="DefaultWorkDirLabel">
      <property name="geometry">
       <rect>
        <x>110</x>

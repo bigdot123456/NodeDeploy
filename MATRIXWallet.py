@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import *
 from Ui_MATRIXWallet import Ui_MainWindow
 
 from MATRIXCmd import *
-
+from MATRIXStringTools import *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
