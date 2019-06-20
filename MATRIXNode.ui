@@ -892,18 +892,18 @@
       <rect>
        <x>20</x>
        <y>30</y>
-       <width>441</width>
-       <height>341</height>
+       <width>871</width>
+       <height>201</height>
       </rect>
      </property>
     </widget>
     <widget class="QTextBrowser" name="NodeServiceText">
      <property name="geometry">
       <rect>
-       <x>490</x>
-       <y>30</y>
-       <width>421</width>
-       <height>341</height>
+       <x>20</x>
+       <y>260</y>
+       <width>871</width>
+       <height>111</height>
       </rect>
      </property>
     </widget>
@@ -939,8 +939,8 @@
     <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
-       <x>470</x>
-       <y>10</y>
+       <x>20</x>
+       <y>240</y>
        <width>111</width>
        <height>20</height>
       </rect>
@@ -952,8 +952,8 @@
     <widget class="QPushButton" name="NodeServiceRefresh">
      <property name="geometry">
       <rect>
-       <x>580</x>
-       <y>0</y>
+       <x>130</x>
+       <y>240</y>
        <width>61</width>
        <height>32</height>
       </rect>

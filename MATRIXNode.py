@@ -4,17 +4,20 @@
 Module implementing MainWindow.
 """
 
+import fire
 from PyQt5 import QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 from MATRIXCmd import *
+from MATRIXFileTools import *
+from MATRIXGetURLContent import *
 from MATRIXStringTools import *
 # from PyQt5.QtWidgets import QMainWindow
 # from PyQt5.QtCore import pyqtSlot
 from Ui_MATRIXNode import Ui_MainWindow
-from MATRIXFileTools import *
-from MATRIXGetURLContent import *
+from MATRIXRunCMD import *
+import webbrowser
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
@@ -23,19 +26,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     vdepositValue = 0
     mdepositValue = 0
     transferValue = 0
+    listlimited = 3
 
     a0_Address = ""
     a1_Address = ""
-    transfer_Address=""
-    superNode_Address=""
+    transfer_Address = ""
+    superNode_Address = ""
 
     fixedPeriod = "活期"
     select_VM = "Miner"
     select_actor = "SuperNode"
-    NodeRootDir=f".{os.sep}"
-    MainFile="gman"
+    NodeRootDir = f".{os.sep}"
+    MainFile = "gman"
 
     url = 'https://www.matrix.io/downloads/'
+
+    cmdNum = 0
+    NodeServer=""
 
     # self.ValidatorradioButton
     # self.FollowSuperNode
@@ -77,6 +84,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.bg3.addButton(self.Fixed3MradioButton, 33)
         self.bg3.addButton(self.Fixed6MradioButton, 34)
         self.bg3.addButton(self.Fixed12Mradiobutton, 35)
+
+        self.NodeBootLogText.document().setMaximumBlockCount(1000)
+        self.NodeServiceText.document().setMaximumBlockCount(1000)
+
         self.show()
 
     def closeEvent(self, event):
@@ -86,7 +97,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             event.accept()
         else:
             event.ignore()
-
 
     @pyqtSlot()
     def on_WalletAddress_editingFinished(self):
@@ -110,7 +120,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print("Wallet a0 account Error.")
 
             self.WalletAddress.clear()
-            #self.WalletAddress.setFocus()
+            # self.WalletAddress.setFocus()
             return
 
     @pyqtSlot()
@@ -170,7 +180,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
+        # raise NotImplementedError
         address = self.TransferWalletAddress.text()
         match, valid_address = MATRIXCmd.checkAddressValid(address)
 
@@ -188,6 +198,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.TransferWalletAddress.clear()
             # self.entrustAccount.setFocus()
             return
+
     @pyqtSlot()
     def on_VDepositValue_editingFinished(self):
         """
@@ -251,9 +262,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
+        # raise NotImplementedError
         print("Select Validator.")
-        self.select_VM="Validator"
+        self.select_VM = "Validator"
         self.mdepositValue = 0
         self.MDepositValue.clear()
         self.VDepositValue.setFocus()
@@ -264,9 +275,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
+        # raise NotImplementedError
         print("Select Miner.")
-        self.select_VM="Miner"
+        self.select_VM = "Miner"
         self.vdepositValue = 0
         self.VDepositValue.clear()
         self.MDepositValue.setFocus()
@@ -328,7 +339,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
+        # raise NotImplementedError
         print("Select beccome SuperNode Node,call others attend in! Best Wish")
         self.select_actor = "SuperNode"
 
@@ -348,7 +359,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
+        # raise NotImplementedError
         print("Select Normal Node,not need others attend in! Best Wish")
         self.select_actor = "NormalNode"
 
@@ -368,8 +379,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # TODO: not implemented yet
         raise NotImplementedError
 
-
-
     # @pyqtSlot(int, int)
     # def on_MDepositValue_cursorPositionChanged(self, p0, p1):
     #     """
@@ -383,8 +392,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     #     # TODO: not implemented yet
     #     raise NotImplementedError
 
-
-
     @pyqtSlot()
     def on_GenerateA1_clicked(self):
         """
@@ -392,7 +399,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         # TODO: not implemented yet
         raise NotImplementedError
-
 
     @pyqtSlot()
     def on_CloseWallet_clicked(self):
@@ -440,22 +446,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
+        # raise NotImplementedError
         rootdir = os.getcwd()
-        workdir=f".{os.sep}work"
-        os.chdir(workdir)
+        print(f"We will enter to {rootdir},and then start ./work/gman")
+        workdir = f".{os.sep}work"
         cmd = f".{os.sep}gman --datadir ./chaindata  init MANGenesis.json"
+
+        try:
+            os.chdir(workdir)
+        except:
+
+            result = "Error in change directory! You should change to correct Path which contain gman"
+            print(result)
+
+            self.OnlyDisplay(cmd, result)
+            return
+
         print(f"Init Gman with command:\ncd {workdir};\n.{os.sep}gman --datadir ./chaindata  init MANGenesis.json \n\n")
-        child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-        outs, errs = child1.communicate()
-
-        # output=str(outs).decode('string_escape')
-        output = str(outs, 'utf-8')
-        print(f"cmd execute result:\n{output}")
-
-        self.cmdLogText.setPlainText(cmd)
-        self.listWidget.addItem(cmd)
-        self.NodeBootLogText.append(output)
+        self.executeAndDisplay(cmd)
+        # child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        # outs, errs = child1.communicate()
+        #
+        # # output=str(outs).decode('string_escape')
+        # output = str(outs, 'utf-8')
+        # print(f"cmd execute result:\n{output}")
+        #
+        # self.cmdLogText.setPlainText(cmd)
+        # self.listWidget.addItem(cmd)
+        # self.NodeBootLogText.append(output)
         os.chdir(rootdir)
 
     @pyqtSlot()
@@ -466,15 +484,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # TODO: not implemented yet
         raise NotImplementedError
 
-
     @pyqtSlot()
     def on_SetDefaultWorkDir_clicked(self):
         """
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
-        dir= QFileDialog.getExistingDirectory(self,"选取文件夹", "./")  # 起始路径
+        # raise NotImplementedError
+        dir = QFileDialog.getExistingDirectory(self, "选取文件夹", "./")  # 起始路径
         if dir != "":
 
             print(f"We will boot Node in {dir}")
@@ -486,9 +503,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.NodeRootDir = dir
             self.DefaultWorkDirLabel.setText(f"默认工作路径为：{self.NodeRootDir}")
+
+            cmd = f"cd {self.NodeRootDir}"
+
+            self.OnlyDisplay(cmd)
         else:
             print(f"You cancel the folder selection, we will work in default dir:{self.NodeRootDir}")
-
 
     # def OpenDirectory():
     #     directory1 = QFileDialog.getExistingDirectory(self,"选取文件夹", "./")  # 起始路径
@@ -517,7 +537,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        #raise NotImplementedError
+        self.NodeServiceText.reload()
+        ## should add some code here for server and client
+
 
     @pyqtSlot()
     def on_NodeServiceRefresh_clicked(self):
@@ -525,7 +548,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        #raise NotImplementedError
+        output="Refresh Finished ! Press button to Get more text!"
+        if self.NodeServer!="" :
+            try:
+                consoleoutput = self.NodeServer.recv()
+                output = str(consoleoutput, 'utf-8')
+                print(f"cmd execute result:\n{output}")
+
+            except:
+                print("No More Result!")
+
+            self.NodeServiceText.append(output)
+            print(output)
+
+        self.NodeServiceText.reload()
+        ## should add some code here for server and client
 
     @pyqtSlot()
     def on_CheckPunish_clicked(self):
@@ -568,7 +606,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # raise NotImplementedError
         rootdir = os.getcwd()
         print(f"We will download all file in {rootdir}{os.sep}Download/ Directory")
+        self.OnlyDisplay(f"autoDownloadGman {self.url}")
         self.MainFile = autoDownloadGman(self.url)
+
+        self.OnlyDisplay(f"autoDeployGman {self.MainFile}")
+        autoDeployGman(self.MainFile)
 
     @pyqtSlot()
     def on_CompileGAN_clicked(self):
@@ -600,7 +642,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        #raise NotImplementedError
+
+        url="kfc.matrix.io"
+        webbrowser.url=
+        webbrowser.open(url)
+        self.OnlyDisplay(f"start {url}")
+        #webbrowser.open_new(url)
+        #webbrowser.open_new_tab(url)
 
     @pyqtSlot()
     def on_OpenExplorerWallet_clicked(self):
@@ -640,7 +689,45 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        #raise NotImplementedError
+        rootdir = os.getcwd()
+        workdir = f".{os.sep}work"
+
+
+        cmd = f".{os.sep}gman --datadir ./chaindata --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 5 --gcmode archive --outputinfo 1 --syncmode 'full'    "
+        ServerArgs = ["./gman",
+                      " --datadir ./chaindata --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 5 --gcmode archive --outputinfo 1 --syncmode 'full'  "]
+        #cmd = f".{os.sep}gman --datadir ./chaindata  init MANGenesis.json"
+
+        try:
+            os.chdir(workdir)
+        except:
+
+            result = "Error in change directory! You should change to correct Path which contain gman"
+            print(result)
+
+            self.OnlyDisplay(cmd, result)
+            return
+
+        print(f"Run Gman Node with command:\ncd {workdir};\n.{cmd}")
+        self.NodeServer = Server(ServerArgs)
+
+        consoleoutput = self.NodeServer.recv()
+        output = str(consoleoutput, 'utf-8')
+        print(f"cmd execute result:\n{output}")
+
+        self.NodeServiceText.append(output)
+
+        self.NodeServiceText.append("Temporary Finish execution, Please push refresh button to Get more text!")
+
+        # test_data = 'aa', 'vv', 'ccc', 'ss', 'ss', 'xx'
+        # for x in test_data:
+        #     server.send(x)
+        #     consoleoutput = server.recv()
+        #     output = str(consoleoutput, 'utf-8')
+        #     print(f"cmd execute result:\n{output}")
+
+        os.chdir(rootdir)
 
     @pyqtSlot()
     def on_StopNode_clicked(self):
@@ -648,7 +735,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        #raise NotImplementedError
+        print("We will kill all gman process!")
+        reply = QMessageBox.question(self, '确认', '确认kill所有gman任务吗', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            autokillGman()
+            self.OnlyDisplay("kill -9 |grep gman")
+        else:
+            print("Keep GMAN run.......!")
 
     @pyqtSlot()
     def on_TransferCash_clicked(self):
@@ -658,8 +753,67 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # TODO: not implemented yet
         raise NotImplementedError
 
+    def executeAndDisplay(self, cmd):
+        print(f"Run Cmd:\n{cmd}")
+        child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        outs, errs = child1.communicate()
+
+        # output=str(outs).decode('string_escape')
+        output = str(outs, 'utf-8')
+        print(f"cmd execute result:\n{output}")
+
+        self.cmdLogText.setPlainText(cmd)
+
+        num = self.listWidget.count()
+        if num > self.listlimited:
+            print("too much item, we save it into cmd result history, Please open cmd.log!")
+
+            with open('cmd.log', 'a') as f:
+                for i in range(num):
+                    logtext = self.listWidget.item(i).text()
+                    f.write(logtext)
+
+            self.listWidget.clear()
+        #     self.listWidget.addItem(innercmd)
+        # else:
+        #     self.listWidget.addItem(innercmd)
+
+        self.cmdNum = self.cmdNum + 1
+        self.listWidget.addItem(f"{self.cmdNum}:{cmd}")
+        self.NodeBootLogText.append(f"CMD {self.cmdNum} result:\n{output}\n++++++++ output Finished!\n")
+        self.NodeBootLogText.show()
+
+    def OnlyDisplay(self, cmd, output=""):
+        print("We will run python internal cmd")
+        innercmd = f"python MATRIXNode.py {cmd}"
+        if output == "":
+            output = f"Run in console and see the result\n{innercmd}\n"
+
+        self.cmdLogText.setPlainText(innercmd)
+        num = self.listWidget.count()
+        if num > self.listlimited:
+            print("too much item, we save it into cmd result history, Please open cmd.log!")
+
+            with open('cmd.log', 'a') as f:
+                for i in range(num):
+                    logtext = self.listWidget.item(i).text()
+                    f.write(logtext)
+
+            self.listWidget.clear()
+        #     self.listWidget.addItem(innercmd)
+        # else:
+        #     self.listWidget.addItem(innercmd)
+
+        # self.listWidget.addItem(innercmd)
+        # self.NodeBootLogText.append(output)
+
+        self.cmdNum = self.cmdNum + 1
+        self.listWidget.addItem(f"{self.cmdNum}:{innercmd}")
+        self.NodeBootLogText.append(f"CMD {self.cmdNum} result:\n{output}\n++++++++ output Finished!\n")
+        self.NodeBootLogText.show()
 
 if __name__ == "__main__":
+    fire.Fire()
     app = QApplication(sys.argv)
     ui = MainWindow()
 
