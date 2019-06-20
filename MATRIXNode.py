@@ -17,7 +17,7 @@ from MATRIXStringTools import *
 # from PyQt5.QtCore import pyqtSlot
 from Ui_MATRIXNode import Ui_MainWindow
 from MATRIXRunCMD import *
-import webbrowser
+from MATRIXWebutil import *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
@@ -26,7 +26,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     vdepositValue = 0
     mdepositValue = 0
     transferValue = 0
-    listlimited = 3
+    listlimited = 8192
 
     a0_Address = ""
     a1_Address = ""
@@ -38,6 +38,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     select_actor = "SuperNode"
     NodeRootDir = f".{os.sep}"
     MainFile = "gman"
+    browser=""
 
     url = 'https://www.matrix.io/downloads/'
 
@@ -87,6 +88,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.NodeBootLogText.document().setMaximumBlockCount(1000)
         self.NodeServiceText.document().setMaximumBlockCount(1000)
+
+        self.browser=MATRIXWebutil()
 
         self.show()
 
@@ -644,12 +647,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # TODO: not implemented yet
         #raise NotImplementedError
 
-        url="kfc.matrix.io"
-        webbrowser.url=
-        webbrowser.open(url)
+        url="http://kfc.matrix.io"
+
+        self.browser.openurl(url)
         self.OnlyDisplay(f"start {url}")
-        #webbrowser.open_new(url)
-        #webbrowser.open_new_tab(url)
+        #MATRIXWebutil.open_new(url)
+        #MATRIXWebutil.open_new_tab(url)
 
     @pyqtSlot()
     def on_OpenExplorerWallet_clicked(self):
@@ -657,7 +660,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        #raise NotImplementedError
+        url = "http://wallet.matrix.io"
+
+        self.browser.openurl(url)
+        self.OnlyDisplay(f"start {url}")
 
     @pyqtSlot()
     def on_OpenExplorerAccount_clicked(self):
@@ -665,7 +672,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        #raise NotImplementedError
+        url = f"http://kfc.matrix.io/{self.a0_Address}"
+
+        self.browser.openurl(url)
+        self.OnlyDisplay(f"start {url}")
 
     @pyqtSlot()
     def on_DeployMinerNode_clicked(self):
