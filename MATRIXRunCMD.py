@@ -9,10 +9,15 @@ from subprocess import Popen, PIPE
 
 class Server(object):
     def __init__(self, args, server_env=None):
+        cmd = ''
+        localargs = cmd.join(args)
+        localargs = args
+        print("Execute cmd:")
+        print(localargs)
         if server_env:
-            self.process = Popen(args, stdin=PIPE, stdout=PIPE, stderr=PIPE, env=server_env)
+            self.process = Popen(localargs, stdin=PIPE, stdout=PIPE, stderr=PIPE, env=server_env)
         else:
-            self.process = Popen(args, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+            self.process = Popen(localargs, stdin=PIPE, stdout=PIPE, stderr=PIPE)
             print(f"Popen({args}, stdin=PIPE, stdout=PIPE, stderr=PIPE)")
         flags = fcntl.fcntl(self.process.stdout, fcntl.F_GETFL)
         fcntl.fcntl(self.process.stdout, fcntl.F_SETFL, flags | os.O_NONBLOCK)
@@ -20,7 +25,8 @@ class Server(object):
     def send(self, data):
         subcmd = bytes(data + "\n", encoding="utf8")
         self.process.stdin.write(subcmd)
-#        self.process.stdin.flush()
+
+    #        self.process.stdin.flush()
 
     def recv(self, t=.1, e=1, tr=5, stderr=0):
         time.sleep(t)
@@ -46,19 +52,22 @@ class Server(object):
 
 
 if __name__ == "__main__":
-    cmd = "./gman --datadir ./chaindata --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 5 --gcmode archive --outputinfo 1 --syncmode 'full'    "
-    ServerArgs = ["./gman",
-                  " --datadir ./chaindata --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 5 --gcmode archive --outputinfo 1 --syncmode 'full'  "]
-
-    workdir = "work"
+    workdir = "../test3/work"
     rootdir = os.getcwd()
     os.chdir(workdir)
+    gmandir = f"{os.getcwd()}"
+    chaindatadir = f"{os.getcwd()}{os.sep}chaindata"
 
+    ServerArgs = [f"{gmandir}{os.sep}gman",
+                  f" --datadir {chaindatadir} --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 5 --gcmode archive --outputinfo 1 --syncmode full  "]
+    m = ''
+    cmd = m.join(ServerArgs)
+    print(cmd)
     server = Server(ServerArgs)
     test_data = 'aa', 'vv', 'ccc', 'ss', 'ss', 'xx'
     for x in test_data:
         server.send(x)
-        consoleoutput=server.recv()
+        consoleoutput = server.recv()
         output = str(consoleoutput, 'utf-8')
         print(f"cmd execute result:\n{output}")
 

@@ -18,6 +18,7 @@ from MATRIXStringTools import *
 from Ui_MATRIXNode import Ui_MainWindow
 from MATRIXRunCMD import *
 from MATRIXWebutil import *
+from MATRIXCMDSever import *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
@@ -44,6 +45,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     cmdNum = 0
     NodeServer=""
+
+    cmdResult=""
 
     # self.ValidatorradioButton
     # self.FollowSuperNode
@@ -90,6 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.NodeServiceText.document().setMaximumBlockCount(1000)
 
         self.browser=MATRIXWebutil()
+        self.timer = QTimer(self)
 
         self.show()
 
@@ -463,6 +467,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print(result)
 
             self.OnlyDisplay(cmd, result)
+            self.cmdResult=result
             return
 
         print(f"Init Gman with command:\ncd {workdir};\n.{os.sep}gman --datadir ./chaindata  init MANGenesis.json \n\n")
@@ -477,6 +482,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.cmdLogText.setPlainText(cmd)
         # self.listWidget.addItem(cmd)
         # self.NodeBootLogText.append(output)
+        QMessageBox.about(self,"MATRIX初始化节点状态",f"执行命令为：{cmd},执行结果为\n{self.cmdResult}")
+
         os.chdir(rootdir)
 
     @pyqtSlot()
@@ -541,7 +548,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         # TODO: not implemented yet
         #raise NotImplementedError
-        self.NodeServiceText.reload()
+        self.NodeBootLogText.reload()
         ## should add some code here for server and client
 
 
@@ -555,8 +562,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         output="Refresh Finished ! Press button to Get more text!"
         if self.NodeServer!="" :
             try:
-                consoleoutput = self.NodeServer.recv()
-                output = str(consoleoutput, 'utf-8')
+                output=self.NodeServer.readcmdResult(1000)
                 print(f"cmd execute result:\n{output}")
 
             except:
@@ -704,41 +710,47 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         rootdir = os.getcwd()
         workdir = f".{os.sep}work"
 
-
-        cmd = f".{os.sep}gman --datadir ./chaindata --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 5 --gcmode archive --outputinfo 1 --syncmode 'full'    "
-        ServerArgs = ["./gman",
-                      " --datadir ./chaindata --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 5 --gcmode archive --outputinfo 1 --syncmode 'full'  "]
-        #cmd = f".{os.sep}gman --datadir ./chaindata  init MANGenesis.json"
-
         try:
             os.chdir(workdir)
         except:
 
             result = "Error in change directory! You should change to correct Path which contain gman"
             print(result)
-
+            self.cmdResult=result
             self.OnlyDisplay(cmd, result)
             return
 
-        print(f"Run Gman Node with command:\ncd {workdir};\n.{cmd}")
-        self.NodeServer = Server(ServerArgs)
+        gmandir = f"{os.getcwd()}"
+        chaindatadir = f"{os.getcwd()}{os.sep}chaindata"
 
-        consoleoutput = self.NodeServer.recv()
-        output = str(consoleoutput, 'utf-8')
-        print(f"cmd execute result:\n{output}")
+        ServerArgs = f"{gmandir}{os.sep}gman --datadir {chaindatadir} --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 3 --gcmode archive --outputinfo 1 --syncmode full  "
 
-        self.NodeServiceText.append(output)
+        # 定义时间超时连接start_app
+        self.timer.timeout.connect(self.startThreadMonitor)
+        # 定义时间任务是一次性任务
+        self.timer.setSingleShot(False)
+        # 启动时间任务
+        self.timer.start()
+        # 实例化一个线程
+        self.NodeSubProcess = DisplaySubProcessInfoThread()
+        self.NodeSubProcess.cmd=ServerArgs
+        # 多线程的信号触发连接到UpText
+        self.NodeSubProcess.trigger.connect(self.update_Node_info)
 
-        self.NodeServiceText.append("Temporary Finish execution, Please push refresh button to Get more text!")
+        #self.NodeServer = MATRIXCMDServer(ServerArgs)
+        #output = self.NodeServer.readcmdResult()
+        #print(output)
 
-        # test_data = 'aa', 'vv', 'ccc', 'ss', 'ss', 'xx'
-        # for x in test_data:
-        #     server.send(x)
-        #     consoleoutput = server.recv()
-        #     output = str(consoleoutput, 'utf-8')
-        #     print(f"cmd execute result:\n{output}")
+        #self.NodeServiceText.append(output)
 
+        #self.NodeServiceText.append("Temporary Finish execution, Please push refresh button to Get more text!")
+
+        #self.cmdResult=output[0:1023]
+        #QMessageBox.about(self,"MATRIX初始化节点状态",f"执行命令为：{cmd},执行结果为\n{self.cmdResult}")
         os.chdir(rootdir)
+
+    def startThreadMonitor(self):
+        self.NodeSubProcess.run()
 
     @pyqtSlot()
     def on_StopNode_clicked(self):
@@ -792,6 +804,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cmdNum = self.cmdNum + 1
         self.listWidget.addItem(f"{self.cmdNum}:{cmd}")
         self.NodeBootLogText.append(f"CMD {self.cmdNum} result:\n{output}\n++++++++ output Finished!\n")
+        self.cmdResult=output
         self.NodeBootLogText.show()
 
     def OnlyDisplay(self, cmd, output=""):
@@ -822,6 +835,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.listWidget.addItem(f"{self.cmdNum}:{innercmd}")
         self.NodeBootLogText.append(f"CMD {self.cmdNum} result:\n{output}\n++++++++ output Finished!\n")
         self.NodeBootLogText.show()
+
+    def update_Node_info(self, data):
+        """更新内容"""
+        #self.setItem(0, 0, QTableWidgetItem(data))  # 设置表格内容(行， 列) 文字
+        self.NodeServiceText.append(data)
+
+
+class DisplaySubProcessInfoThread(QThread):
+    # 定义一个信号
+    trigger = pyqtSignal(str)
+    tt=0
+
+    def __int__(self):
+        # 初始化函数，默认
+        super(DisplaySubProcessInfoThread, self).__init__()
+        self.cmd=""
+        print(f"exec command {self.cmd}")
+
+    def run(self):
+        time.sleep(1)
+        # 等待5秒后，给触发信号，并传递test
+        self.tt=self.tt+1
+        msg=f"{self.cmd} thread time {self.tt}"
+        print(msg)
+        self.trigger.emit(msg)
 
 if __name__ == "__main__":
     fire.Fire()
