@@ -755,8 +755,8 @@ def initGman(workdir='work'):
 
 if __name__ == '__main__':
     url = 'https://www.matrix.io/downloads/'
-    #Myfile = autoDownloadGman(url)
-    Myfile="./backup/gman(mac)/MAC EN V2.6/gman"
+    Myfile = autoDownloadGman(url)
+    #Myfile="./backup/gman(mac)/MAC EN V2.6/gman"
     autoDeployGman(Myfile)
     #autoRunGman()
     # autokillGman()
