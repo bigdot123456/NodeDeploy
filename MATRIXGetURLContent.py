@@ -566,7 +566,7 @@ def autoDownloadGman(infourl='https://www.matrix.io/downloads/', backupdir="back
     #timestamp = "2019-06-14_16_58_17"
 
     # backupdir = "backup"
-    workdir = "work"
+    # workdir = "work"
 
     sysstr = platform.system()
     if (sysstr == "Windows"):
@@ -731,7 +731,17 @@ def autokillGman():
 
 def initGman(workdir='work'):
     rootdir = os.getcwd()
-    os.chdir(workdir)
+    print(f"We will enter to {rootdir},and then start ./work/gman")
+    workdir = f".{os.sep}work"
+    cmd = f".{os.sep}gman --datadir ./chaindata  init MANGenesis.json"
+
+    rootdir = os.getcwd()
+    try:
+        os.chdir(workdir)
+    except:
+        print(f"Error with change dir to {workdir}")
+        return False
+
     cmd = f".{os.sep}gman --datadir ./chaindata  init MANGenesis.json"
     print(f"Init Gman with command:\ncd {workdir};\n.{os.sep}gman --datadir ./chaindata  init MANGenesis.json \n\n")
     child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
@@ -745,7 +755,8 @@ def initGman(workdir='work'):
 
 if __name__ == '__main__':
     url = 'https://www.matrix.io/downloads/'
-    Myfile = autoDownloadGman(url)
+    #Myfile = autoDownloadGman(url)
+    Myfile="./backup/gman(mac)/MAC EN V2.6/gman"
     autoDeployGman(Myfile)
     #autoRunGman()
     # autokillGman()

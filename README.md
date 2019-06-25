@@ -36,7 +36,7 @@ ipc connect
 ```
 rpc start
 ```
-./gman --datadir ./chaindata --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 5 --gcmode archive --outputinfo 1 --syncmode 'full'    
+./gman --datadir ./chaindata --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 5 --gcmode archive --outputinfo 0 --syncmode full    
 ```
 
 wallet account generation

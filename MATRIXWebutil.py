@@ -1,5 +1,7 @@
+import os
 import platform
 import re
+import stat
 import subprocess
 import sys
 
@@ -8,7 +10,12 @@ class MATRIXWebutil:
     Platform = "Windows"
 
     def __init__(self):
+        self.Platform = "Windows"
         self.checkplatform()
+        self.childProcess = subprocess.Popen("echo Hello MATRIX Subprocess!", stdin=subprocess.PIPE,
+                                          stdout=subprocess.PIPE,
+                                          stderr=subprocess.PIPE,
+                                          shell=True)
 
     def openurl(self, url):
         print(f"Openning {url}....")
@@ -23,7 +30,7 @@ class MATRIXWebutil:
 
     def exec(self, cmd, arg=""):
         cmdlist = f"{cmd} {arg}"
-        #cmdlist=["open http://matrix.io"]
+        # cmdlist=["open http://matrix.io"]
         print(f"exec {cmdlist}")
         subprocess.call(cmdlist, shell=True)
 
@@ -83,11 +90,76 @@ class MATRIXWebutil:
             self.Platform = "Windows"
             print("Other System tasks")
 
+    # def runwincmd(self,cmd):
+    def SaveExeclinux(self, cmd, filename="a.cmd"):
+
+        with open(filename, 'w') as f:
+            f.write(cmd)
+        os.chmod(filename, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+        localargs = f"xterm -e {cmd} &"
+
+        self.childProcess = subprocess.Popen(localargs, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                          stderr=subprocess.PIPE,
+                                          shell=True)
+        return self.childProcess
+
+    def SaveExecWin(self, cmd, filename="a.bat"):
+
+        with open(filename, 'w') as f:
+            f.write(cmd)
+
+        os.chmod(filename, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+        localargs = f"start {filename}"  # f"xterm -e {cmd} &"
+
+        # note we should not use Popen mathod since it will block the program"
+        # self.childProcess = subprocess.call(localargs, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+        #                                   stderr=subprocess.PIPE,
+        #                                   shell=True)
+
+        self.childProcess = subprocess.call(localargs,shell=True)
+        #i = 0
+
+        # while self.childProcess.poll() is None and (i < 100):
+        #     line = self.childProcess.stdout.readline()
+        #     line = line.strip()
+        #
+        #     lineok = str(line, 'utf-8')
+        #     print(lineok)
+        #     i = i + 1
+        #
+        return self.childProcess
+
+    def saveExec(self, cmd, filename="a.cmd"):
+        print(f"start {cmd}....")
+        if self.Platform == "Windows":
+            return self.SaveExecWin(cmd, filename)
+        elif self.Platform == "Linux":
+            return self.SaveExeclinux(cmd, filename)
+        elif self.Platform == "Darwin":
+            return self.SaveExeclinux(cmd, filename)
+        else:
+            return self.SaveExecWin(cmd, filename)
+
 
 if __name__ == "__main__":
     print("It's MATRIX World!")
     url = "http://matrix.io"
-    a=MATRIXWebutil()
+    a = MATRIXWebutil()
     a.openurl(url)
+
+    workdir = "../test3/work"
+    rootdir = os.getcwd()
+    os.chdir(workdir)
+    gmandir = f"{os.getcwd()}"
+    chaindatadir = f"{os.getcwd()}{os.sep}chaindata"
+    if a.Platform == "Windows":
+        postfix = ".exe"
+    else:
+        postfix = ""
+
+    ServerArgs = f"{gmandir}{os.sep}gman{postfix} --datadir {chaindatadir} --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 5 --gcmode archive --outputinfo 0 --syncmode full  "
+
+    print(ServerArgs)
+    a.saveExec(ServerArgs)
 
     sys.exit()

@@ -21,17 +21,19 @@ class MATRIXCMDServer(object):
 
         self.childprocess = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                              shell=True)
+
         print("Program start")
         # for i in range(100):
         #     info=self.childprocess.stdout.readline()
         #     output = str(info, 'utf-8')
         #     print(output)
 
-    def readcmdResult(self, linenum=100):
+    def readcmdResult(self, linenum=1):
 
         if linenum < 1:
             linenum = 1
         result = ''
+
         for i in range(linenum):
             if self.childprocess.poll() is None:
                 line = self.childprocess.stdout.readline()
@@ -40,12 +42,16 @@ class MATRIXCMDServer(object):
                 if lineok:
                     #print('Subprogram output: [{}]'.format(lineok))
                     result = f"result{lineok}"
-                return result
 
+        return result
+
+    def readcmdStatus(self):
         if self.childprocess.returncode == 0:
             print('\n\nSubprogram success\n\n')
+            return True
         else:
             print('\n\nSubprogram failed\n\n')
+            return False
 
 if __name__ == "__main__":
 
@@ -56,10 +62,12 @@ if __name__ == "__main__":
     chaindatadir = f"{os.getcwd()}{os.sep}chaindata"
 
     ServerArgs = [f"{gmandir}{os.sep}gman",
-                  f" --datadir {chaindatadir} --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 3 --gcmode archive --outputinfo 1 --syncmode full  "]
+                  f" --datadir {chaindatadir} --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 3 --gcmode archive --outputinfo 0 --syncmode full  "]
 
     server = MATRIXCMDServer(ServerArgs)
-    while server.childprocess.poll() is None:
+    #while server.childprocess.poll() is None:
+    for i in range(100):
+        print(f"line {i}")
         text=server.readcmdResult()
         print(text)
 

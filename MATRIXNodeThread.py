@@ -93,6 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.NodeServiceText.document().setMaximumBlockCount(1000)
 
         self.browser=MATRIXWebutil()
+        self.timer = QTimer(self)
 
         self.show()
 
@@ -561,7 +562,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         output="Refresh Finished ! Press button to Get more text!"
         if self.NodeServer!="" :
             try:
-                output=self.NodeServer.readcmdResult(10)
+                output=self.NodeServer.readcmdResult(1000)
                 print(f"cmd execute result:\n{output}")
 
             except:
@@ -716,26 +717,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             result = "Error in change directory! You should change to correct Path which contain gman"
             print(result)
             self.cmdResult=result
-            self.OnlyDisplay(cmd, result)
+            self.OnlyDisplay("./gman", result)
             return
 
         gmandir = f"{os.getcwd()}"
         chaindatadir = f"{os.getcwd()}{os.sep}chaindata"
 
-        ServerArgs = f"{gmandir}{os.sep}gman --datadir {chaindatadir} --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 3 --gcmode archive --outputinfo 0 --syncmode full  "
+        ServerArgs = f"{gmandir}{os.sep}gman --datadir {chaindatadir} --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 3 --gcmode archive --outputinfo 1 --syncmode full  "
 
         # 定义时间超时连接start_app
+        self.timer.timeout.connect(self.startThreadMonitor)
+        # 定义时间任务是一次性任务
+        self.timer.setSingleShot(False)
+        # 启动时间任务
+        self.timer.start()
+        # 实例化一个线程
+        self.NodeSubProcess = DisplaySubProcessInfoThread()
+        self.NodeSubProcess.cmd=ServerArgs
+        # 多线程的信号触发连接到UpText
+        self.NodeSubProcess.trigger.connect(self.update_Node_info)
 
-        self.NodeServer = MATRIXCMDServer(ServerArgs)
-        output = self.NodeServer.readcmdResult()
-        print(output)
+        #self.NodeServer = MATRIXCMDServer(ServerArgs)
+        #output = self.NodeServer.readcmdResult()
+        #print(output)
 
-        self.NodeServiceText.append(output)
+        #self.NodeServiceText.append(output)
 
-        self.NodeServiceText.append("Temporary Finish execution, Please push refresh button to Get more text!")
+        #self.NodeServiceText.append("Temporary Finish execution, Please push refresh button to Get more text!")
 
-        self.cmdResult=output[0:1023]
-        QMessageBox.about(self,"MATRIX初始化节点状态",f"执行命令为：{ServerArgs},执行结果为\n{self.cmdResult}")
+        #self.cmdResult=output[0:1023]
+        #QMessageBox.about(self,"MATRIX初始化节点状态",f"执行命令为：{cmd},执行结果为\n{self.cmdResult}")
         os.chdir(rootdir)
 
     def startThreadMonitor(self):
@@ -836,14 +847,14 @@ class DisplaySubProcessInfoThread(QThread):
     trigger = pyqtSignal(str)
     tt=0
 
-    def __int__(self,cmd="",parent=None):
+    def __int__(self):
         # 初始化函数，默认
         super(DisplaySubProcessInfoThread, self).__init__()
-        self.cmd=cmd
+        self.cmd=""
         print(f"exec command {self.cmd}")
 
     def run(self):
-        self.sleep(1)
+        time.sleep(1)
         # 等待5秒后，给触发信号，并传递test
         self.tt=self.tt+1
         msg=f"{self.cmd} thread time {self.tt}"
