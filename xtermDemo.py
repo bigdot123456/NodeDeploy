@@ -3,7 +3,7 @@
 import subprocess
 import shlex
 import os, stat
-import win32api
+#import win32api
 
 def SaveExeclinux(cmd,filename="a.cmd"):
 

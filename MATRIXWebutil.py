@@ -11,7 +11,9 @@ class MATRIXWebutil:
 
     def __init__(self):
         self.Platform = "Windows"
+        self.postfix=""
         self.checkplatform()
+        self.gmanName=f"gman{self.postfix}"
         self.childProcess = subprocess.Popen("echo Hello MATRIX Subprocess!", stdin=subprocess.PIPE,
                                           stdout=subprocess.PIPE,
                                           stderr=subprocess.PIPE,
@@ -80,14 +82,18 @@ class MATRIXWebutil:
         if (sysstr == "Windows"):
             print("Now We will do Windows tasks")
             self.Platform = "Windows"
+            self.postfix=".exe"
         elif (sysstr == "Linux"):
             print("Now We will do Linux tasks")
             self.Platform = "Linux"
+            self.postfix = ""
         elif (sysstr == "Darwin"):
             print("Now We will do MacOS tasks")
+            self.postfix = ""
             self.Platform = "Darwin"
         else:
             self.Platform = "Windows"
+            self.postfix = ".exe"
             print("Other System tasks")
 
     # def runwincmd(self,cmd):

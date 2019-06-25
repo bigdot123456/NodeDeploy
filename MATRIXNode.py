@@ -4,21 +4,21 @@
 Module implementing MainWindow.
 """
 
+import shlex
+
 import fire
 from PyQt5 import QtCore
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
 
+from MATRIXCMDSever import *
 from MATRIXCmd import *
-from MATRIXFileTools import *
 from MATRIXGetURLContent import *
 from MATRIXStringTools import *
+# from MATRIXRunCMD import *
+from MATRIXWebutil import *
 # from PyQt5.QtWidgets import QMainWindow
 # from PyQt5.QtCore import pyqtSlot
 from Ui_MATRIXNode import Ui_MainWindow
-from MATRIXRunCMD import *
-from MATRIXWebutil import *
-from MATRIXCMDSever import *
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
@@ -456,20 +456,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         rootdir = os.getcwd()
         print(f"We will enter to {rootdir},and then start ./work/gman")
         workdir = f".{os.sep}work"
-        cmd = f".{os.sep}gman --datadir ./chaindata  init MANGenesis.json"
+        execfile=f".{os.sep}{self.browser.gmanName}"
+
+        cmd = f"{execfile} --datadir ./chaindata  init MANGenesis.json"
 
         try:
             os.chdir(workdir)
-        except:
-
-            result = "Error in change directory! You should change to correct Path which contain gman"
+            f = open(execfile)
+            f.close()
+        except IOError:
+            result = f"Error with openning {cmd}! You should change to correct Path which contain gman"
             print(result)
 
             self.OnlyDisplay(cmd, result)
             self.cmdResult=result
             return
 
-        print(f"Init Gman with command:\ncd {workdir};\n.{os.sep}gman --datadir ./chaindata  init MANGenesis.json \n\n")
+        print(f"Init Gman with command:\ncd {workdir};\n{execfile} --datadir ./chaindata  init MANGenesis.json \n\n")
         self.executeAndDisplay(cmd)
         # child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         # outs, errs = child1.communicate()
@@ -559,16 +562,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # TODO: not implemented yet
         #raise NotImplementedError
         output="Refresh Finished ! Press button to Get more text!"
-        if self.NodeServer!="" :
-            try:
-                output=self.NodeServer.readcmdResult(10)
-                print(f"cmd execute result:\n{output}")
 
-            except:
-                print("No More Result!")
-
-            self.NodeServiceText.append(output)
-            print(output)
+        self.NodeServiceText.append(output)
 
         self.NodeServiceText.reload()
         ## should add some code here for server and client
@@ -716,26 +711,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             result = "Error in change directory! You should change to correct Path which contain gman"
             print(result)
             self.cmdResult=result
-            self.OnlyDisplay(cmd, result)
-            return
+            self.OnlyDisplay("gman deploy", result)
+            return False
 
         gmandir = f"{os.getcwd()}"
         chaindatadir = f"{os.getcwd()}{os.sep}chaindata"
 
-        ServerArgs = f"{gmandir}{os.sep}gman --datadir {chaindatadir} --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 3 --gcmode archive --outputinfo 0 --syncmode full  "
+        ServerArgs = f"{gmandir}{os.sep}{self.browser.gmanName} --datadir {chaindatadir} --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 1 --debug --verbosity 5 --gcmode archive --outputinfo 0 --syncmode full  "
+        print(ServerArgs)
+        self.browser.saveExec(ServerArgs)
 
-        # 定义时间超时连接start_app
-
-        self.NodeServer = MATRIXCMDServer(ServerArgs)
-        output = self.NodeServer.readcmdResult()
-        print(output)
-
-        self.NodeServiceText.append(output)
-
-        self.NodeServiceText.append("Temporary Finish execution, Please push refresh button to Get more text!")
-
-        self.cmdResult=output[0:1023]
-        QMessageBox.about(self,"MATRIX初始化节点状态",f"执行命令为：{ServerArgs},执行结果为\n{self.cmdResult}")
+        self.NodeServiceText.append(f"执行命令:{ServerArgs},请在窗口观察结果")
+        QMessageBox.about(self,"MATRIX初始化节点状态",f"执行命令为：{ServerArgs},执行结果请查看对应窗口，如果是MAC平台，请注意安装Xterm，或者在terminal窗口执行命令")
         os.chdir(rootdir)
 
     def startThreadMonitor(self):
@@ -767,6 +754,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def executeAndDisplay(self, cmd):
         print(f"Run Cmd:\n{cmd}")
+        #localargs = shlex.split(cmd)
+        #
+        #for s in localargs :
+        #    print(f"part {s}\n")
+        #
+        #if not os.path.exists(localargs[0]):
+        #    result=f"error! file {localargs[0]} not exists!"
+        #    print(result)
+        #    self.cmdResult = result
+        #    return False
+
+        #try:
+        #    f = open(localargs[0])
+        #    f.close()
+        #except IOError:
+        #    result = f"Error in change directory or File doesn't exist! You should change to correct Path which contain {localargs[0]}"
+        #    print(result)
+        #    self.cmdResult=result
+        #    return False
+         
         child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         outs, errs = child1.communicate()
 
