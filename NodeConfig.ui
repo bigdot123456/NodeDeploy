@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ConfigNodeNormal</class>
+ <widget class="QDialog" name="ConfigNodeNormal">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>节点启动参数配置</string>
+  </property>
+  <property name="toolTip">
+   <string extracomment="配置节点属性"/>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>10</y>
+     <width>81</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>60</y>
+     <width>491</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QSlider" name="horizontalSliderDebugInfo">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>30</y>
+      <width>361</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelNodebugInfo">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>10</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>无调试信息</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelRichDebugInfo">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>10</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>调试信息丰富</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxDebug2File">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>60</y>
+      <width>161</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>调试文件将保存导本地，而不是打印到屏幕</string>
+    </property>
+    <property name="text">
+     <string>调试信息输出到文件</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxGCMode">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>60</y>
+      <width>161</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>设置gc参数</string>
+    </property>
+    <property name="text">
+     <string>使用内存回收模式</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxSyncmode">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>90</y>
+      <width>161</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>全节点同步模式</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxLessDisk">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>90</y>
+      <width>161</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>精简存储模式</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QLineEdit" name="lineEditNetworkID">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>200</y>
+     <width>441</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>默认选择1，1表示链接主网，测试网则输入666</string>
+   </property>
+   <property name="text">
+    <string>默认选择1，测试网则输入666</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelNetworkID">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>200</y>
+     <width>41</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>主网ID</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelRPCAddress">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>240</y>
+     <width>61</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>RPC地址</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEditRPCAddress">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>240</y>
+     <width>441</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>默认本机 0.0.0.0 ，远程则选择合理的IP，或选择MATRIX开放链接</string>
+   </property>
+   <property name="text">
+    <string>默认本机 0.0.0.0 ，远程则选择合理的IP，或选择MATRIX开放链接</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEditOtherPara">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>310</y>
+     <width>441</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>可以留空，或者自行输入</string>
+   </property>
+   <property name="text">
+    <string>可以留空，或者自行输入</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelOtherPara">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>290</y>
+     <width>91</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>其它参数输入</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelGmanCommand">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>10</y>
+     <width>491</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>启动命令为：</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonPastPara">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>430</y>
+     <width>161</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>将倒入剪切板的gman参数，并替换现有参数配置</string>
+   </property>
+   <property name="text">
+    <string>从剪切板导入参数</string>
+   </property>
+  </widget>
+  <zorder>frame</zorder>
+  <zorder>buttonBox</zorder>
+  <zorder>lineEditNetworkID</zorder>
+  <zorder>labelNetworkID</zorder>
+  <zorder>labelRPCAddress</zorder>
+  <zorder>lineEditRPCAddress</zorder>
+  <zorder>lineEditOtherPara</zorder>
+  <zorder>labelOtherPara</zorder>
+  <zorder>labelGmanCommand</zorder>
+  <zorder>pushButtonPastPara</zorder>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ConfigNodeNormal</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ConfigNodeNormal</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

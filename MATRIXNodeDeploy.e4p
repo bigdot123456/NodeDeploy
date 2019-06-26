@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-6.1.dtd">
 <!-- eric project file for project MATRIXNodeDeploy -->
-<!-- Saved: 2019-06-19, 12:44:50 -->
+<!-- Saved: 2019-06-26, 10:07:15 -->
 <!-- Copyright (C) 2019 ,  -->
 <Project version="6.1">
   <Language>en_US</Language>
@@ -13,12 +13,19 @@
   <Email></Email>
   <Eol index="0"/>
   <Sources>
+    <Source>MATRIXCMDSever.py</Source>
+    <Source>MATRIXCall.py</Source>
+    <Source>MATRIXCmd.py</Source>
+    <Source>MATRIXFileTools.py</Source>
     <Source>MATRIXNode.py</Source>
+    <Source>NodeConfig.py</Source>
     <Source>Ui_MATRIXNode.py</Source>
+    <Source>Ui_NodeConfig.py</Source>
     <Source>__init__.py</Source>
   </Sources>
   <Forms>
     <Form>MATRIXNode.ui</Form>
+    <Form>NodeConfig.ui</Form>
   </Forms>
   <Others>
     <Other>.gitignore</Other>

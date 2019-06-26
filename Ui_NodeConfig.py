@@ -1,0 +1,123 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file '/Users/liqinghua/eric/NodeDeploy/NodeConfig.ui'
+#
+# Created by: PyQt5 UI code generator 5.12.2
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+
+class Ui_ConfigNodeNormal(object):
+    def setupUi(self, ConfigNodeNormal):
+        ConfigNodeNormal.setObjectName("ConfigNodeNormal")
+        ConfigNodeNormal.resize(640, 480)
+        ConfigNodeNormal.setToolTip("")
+        self.buttonBox = QtWidgets.QDialogButtonBox(ConfigNodeNormal)
+        self.buttonBox.setGeometry(QtCore.QRect(550, 10, 81, 81))
+        self.buttonBox.setOrientation(QtCore.Qt.Vertical)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+        self.frame = QtWidgets.QFrame(ConfigNodeNormal)
+        self.frame.setGeometry(QtCore.QRect(60, 60, 491, 121))
+        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame.setObjectName("frame")
+        self.horizontalSliderDebugInfo = QtWidgets.QSlider(self.frame)
+        self.horizontalSliderDebugInfo.setGeometry(QtCore.QRect(40, 30, 361, 22))
+        self.horizontalSliderDebugInfo.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSliderDebugInfo.setObjectName("horizontalSliderDebugInfo")
+        self.labelNodebugInfo = QtWidgets.QLabel(self.frame)
+        self.labelNodebugInfo.setGeometry(QtCore.QRect(40, 10, 81, 16))
+        self.labelNodebugInfo.setObjectName("labelNodebugInfo")
+        self.labelRichDebugInfo = QtWidgets.QLabel(self.frame)
+        self.labelRichDebugInfo.setGeometry(QtCore.QRect(320, 10, 81, 16))
+        self.labelRichDebugInfo.setObjectName("labelRichDebugInfo")
+        self.checkBoxDebug2File = QtWidgets.QCheckBox(self.frame)
+        self.checkBoxDebug2File.setGeometry(QtCore.QRect(40, 60, 161, 20))
+        self.checkBoxDebug2File.setObjectName("checkBoxDebug2File")
+        self.checkBoxGCMode = QtWidgets.QCheckBox(self.frame)
+        self.checkBoxGCMode.setGeometry(QtCore.QRect(290, 60, 161, 20))
+        self.checkBoxGCMode.setObjectName("checkBoxGCMode")
+        self.checkBoxSyncmode = QtWidgets.QCheckBox(self.frame)
+        self.checkBoxSyncmode.setGeometry(QtCore.QRect(40, 90, 161, 20))
+        self.checkBoxSyncmode.setObjectName("checkBoxSyncmode")
+        self.checkBoxLessDisk = QtWidgets.QCheckBox(self.frame)
+        self.checkBoxLessDisk.setGeometry(QtCore.QRect(290, 90, 161, 20))
+        self.checkBoxLessDisk.setObjectName("checkBoxLessDisk")
+        self.lineEditNetworkID = QtWidgets.QLineEdit(ConfigNodeNormal)
+        self.lineEditNetworkID.setGeometry(QtCore.QRect(110, 200, 441, 21))
+        self.lineEditNetworkID.setObjectName("lineEditNetworkID")
+        self.labelNetworkID = QtWidgets.QLabel(ConfigNodeNormal)
+        self.labelNetworkID.setGeometry(QtCore.QRect(40, 200, 41, 16))
+        self.labelNetworkID.setObjectName("labelNetworkID")
+        self.labelRPCAddress = QtWidgets.QLabel(ConfigNodeNormal)
+        self.labelRPCAddress.setGeometry(QtCore.QRect(40, 240, 61, 16))
+        self.labelRPCAddress.setObjectName("labelRPCAddress")
+        self.lineEditRPCAddress = QtWidgets.QLineEdit(ConfigNodeNormal)
+        self.lineEditRPCAddress.setGeometry(QtCore.QRect(110, 240, 441, 21))
+        self.lineEditRPCAddress.setObjectName("lineEditRPCAddress")
+        self.lineEditOtherPara = QtWidgets.QLineEdit(ConfigNodeNormal)
+        self.lineEditOtherPara.setGeometry(QtCore.QRect(110, 310, 441, 21))
+        self.lineEditOtherPara.setObjectName("lineEditOtherPara")
+        self.labelOtherPara = QtWidgets.QLabel(ConfigNodeNormal)
+        self.labelOtherPara.setGeometry(QtCore.QRect(40, 290, 91, 16))
+        self.labelOtherPara.setObjectName("labelOtherPara")
+        self.labelGmanCommand = QtWidgets.QLabel(ConfigNodeNormal)
+        self.labelGmanCommand.setGeometry(QtCore.QRect(40, 10, 491, 41))
+        self.labelGmanCommand.setObjectName("labelGmanCommand")
+        self.pushButtonPastPara = QtWidgets.QPushButton(ConfigNodeNormal)
+        self.pushButtonPastPara.setGeometry(QtCore.QRect(460, 430, 161, 41))
+        self.pushButtonPastPara.setObjectName("pushButtonPastPara")
+        self.frame.raise_()
+        self.buttonBox.raise_()
+        self.lineEditNetworkID.raise_()
+        self.labelNetworkID.raise_()
+        self.labelRPCAddress.raise_()
+        self.lineEditRPCAddress.raise_()
+        self.lineEditOtherPara.raise_()
+        self.labelOtherPara.raise_()
+        self.labelGmanCommand.raise_()
+        self.pushButtonPastPara.raise_()
+
+        self.retranslateUi(ConfigNodeNormal)
+        self.buttonBox.accepted.connect(ConfigNodeNormal.accept)
+        self.buttonBox.rejected.connect(ConfigNodeNormal.reject)
+        QtCore.QMetaObject.connectSlotsByName(ConfigNodeNormal)
+
+    def retranslateUi(self, ConfigNodeNormal):
+        _translate = QtCore.QCoreApplication.translate
+        ConfigNodeNormal.setWindowTitle(_translate("ConfigNodeNormal", "节点启动参数配置"))
+        self.labelNodebugInfo.setText(_translate("ConfigNodeNormal", "无调试信息"))
+        self.labelRichDebugInfo.setText(_translate("ConfigNodeNormal", "调试信息丰富"))
+        self.checkBoxDebug2File.setToolTip(_translate("ConfigNodeNormal", "调试文件将保存导本地，而不是打印到屏幕"))
+        self.checkBoxDebug2File.setText(_translate("ConfigNodeNormal", "调试信息输出到文件"))
+        self.checkBoxGCMode.setToolTip(_translate("ConfigNodeNormal", "设置gc参数"))
+        self.checkBoxGCMode.setText(_translate("ConfigNodeNormal", "使用内存回收模式"))
+        self.checkBoxSyncmode.setText(_translate("ConfigNodeNormal", "全节点同步模式"))
+        self.checkBoxLessDisk.setText(_translate("ConfigNodeNormal", "精简存储模式"))
+        self.lineEditNetworkID.setToolTip(_translate("ConfigNodeNormal", "默认选择1，1表示链接主网，测试网则输入666"))
+        self.lineEditNetworkID.setText(_translate("ConfigNodeNormal", "默认选择1，测试网则输入666"))
+        self.labelNetworkID.setText(_translate("ConfigNodeNormal", "主网ID"))
+        self.labelRPCAddress.setText(_translate("ConfigNodeNormal", "RPC地址"))
+        self.lineEditRPCAddress.setToolTip(_translate("ConfigNodeNormal", "默认本机 0.0.0.0 ，远程则选择合理的IP，或选择MATRIX开放链接"))
+        self.lineEditRPCAddress.setText(_translate("ConfigNodeNormal", "默认本机 0.0.0.0 ，远程则选择合理的IP，或选择MATRIX开放链接"))
+        self.lineEditOtherPara.setToolTip(_translate("ConfigNodeNormal", "可以留空，或者自行输入"))
+        self.lineEditOtherPara.setText(_translate("ConfigNodeNormal", "可以留空，或者自行输入"))
+        self.labelOtherPara.setText(_translate("ConfigNodeNormal", "其它参数输入"))
+        self.labelGmanCommand.setText(_translate("ConfigNodeNormal", "启动命令为："))
+        self.pushButtonPastPara.setToolTip(_translate("ConfigNodeNormal", "将倒入剪切板的gman参数，并替换现有参数配置"))
+        self.pushButtonPastPara.setText(_translate("ConfigNodeNormal", "从剪切板导入参数"))
+
+
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    ConfigNodeNormal = QtWidgets.QDialog()
+    ui = Ui_ConfigNodeNormal()
+    ui.setupUi(ConfigNodeNormal)
+    ConfigNodeNormal.show()
+    sys.exit(app.exec_())
