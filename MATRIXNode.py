@@ -18,7 +18,7 @@ from MATRIXWebutil import *
 # from PyQt5.QtWidgets import QMainWindow
 # from PyQt5.QtCore import pyqtSlot
 from Ui_MATRIXNode import Ui_MainWindow
-
+from MATRIXPassword import *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
@@ -445,7 +445,53 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        # raise NotImplementedError
+        print("Generate a random Account for deposit! You should input password for this account!")
+        pwd = MATRIXPasswordDiaglog()  # DIY密码输入框
+        r = pwd.exec_()  # 执行密码输入框
+        if not r:
+            print("You discard generating password and can't generate a random account!")
+            return
+        else:
+            passwordOK=pwd.text
+            print(f"password is {passwordOK}")
+
+        rootdir = os.getcwd()
+        workdir = f".{os.sep}work"
+
+        try:
+            os.chdir(workdir)
+        except:
+
+            result = "Error in change directory! You should change to correct Path which contain gman"
+            print(result)
+            self.cmdResult=result
+            self.OnlyDisplay("Account A1 Generation", result)
+            return False
+
+        ipcname=f".{os.sep}chaindata{os.sep}gman.ipc"
+        gman=f".{os.sep}{self.browser.gmanName}"
+        #cmd=f"echo \"personal.newAccount(\\\"{passwordOK}\\\")\" | {gman} attach {ipcname} | grep 'MAN.' "
+        cmd = f"echo \"personal.newAccount(\\\"{passwordOK}\\\")\" | {gman} attach {ipcname} "
+
+        line=self.executeAndDisplay(cmd)
+        matchObj = re.split(r'(")(MAN\.[a-km-zA-HJ-NP-Z1-9]{2,34})(")', line)
+        #r'(")(MAN\.[a-km-zA-HJ-NP-Z1-9]{2,34})(")'
+
+        if matchObj:
+            self.a1_Address=matchObj[2]
+            print(f"成功生成账户{self.a1_Address}")
+            # matchObj.group()
+        else:
+            print(f"检查是否启动GMAN节点，结果为!{line}")
+            QMessageBox.warning(self, "警告", f"检查是否启动GMAN节点，输出日志为：{line}")
+
+        print(f"A1 Address is {self.a1_Address}")
+
+        self.entrustAccount.setText(self.a1_Address)
+        self.WalletAddressLabel.setText(f"设定委托账户为当前随机账户{self.a1_Address}，请保管好账户密码")
+
+        os.chdir(rootdir)
 
     @pyqtSlot()
     def on_NodeInit_clicked(self):
@@ -653,6 +699,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         raise NotImplementedError
 
     @pyqtSlot()
+    def on_QPushButtonexecInputCMD_clicked(self):
+        """
+        Slot documentation goes here.
+        """
+        # TODO: not implemented yet
+        # raise NotImplementedError
+        cmd=self.LineEditInput.text()
+        print(f"We will execute the command {cmd} from line input line box")
+
+        self.executeAndDisplay(cmd)
+
+    @pyqtSlot()
     def on_OpenExplorer_clicked(self):
         """
         Slot documentation goes here.
@@ -757,6 +815,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             print("Keep GMAN run.......!")
 
+        cmd="kill -9  `ps -ef | grep  -v grep  | grep  gman | grep 'networkid'  | awk '{print $2}'`"
+        self.executeAndDisplay(cmd)
+
     @pyqtSlot()
     def on_TransferCash_clicked(self):
         """
@@ -764,6 +825,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         # TODO: not implemented yet
         raise NotImplementedError
+
+    @pyqtSlot()
+    def on_pushButtonClearLineInput_clicked(self):
+        """
+        Slot documentation goes here.
+        """
+        # TODO: not implemented yet
+        #raise NotImplementedError
+        print("clear command line input!")
+        self.LineEditInput.clear()
+        self.LineEditInput.setText("")
+        self.LineEditInput.setFocus()
+
 
     def executeAndDisplay(self, cmd):
         print(f"Run Cmd:\n{cmd}")
@@ -787,7 +861,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #    self.cmdResult=result
         #    return False
          
-        child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE,stdin=subprocess.PIPE)
+        #child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+
         outs, errs = child1.communicate()
 
         # output=str(outs).decode('string_escape')
@@ -815,6 +891,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.NodeBootLogText.append(f"CMD {self.cmdNum} result:\n{output}\n++++++++ output Finished!\n")
         self.cmdResult=output
         self.NodeBootLogText.show()
+        return output
 
     def OnlyDisplay(self, cmd, output=""):
         print("We will run python internal cmd")

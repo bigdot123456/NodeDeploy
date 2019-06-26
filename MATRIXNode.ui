@@ -390,7 +390,7 @@
       <rect>
        <x>90</x>
        <y>30</y>
-       <width>461</width>
+       <width>581</width>
        <height>16</height>
       </rect>
      </property>
@@ -621,7 +621,7 @@
     <widget class="QPushButton" name="CheckPunish">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>90</y>
        <width>151</width>
        <height>32</height>
@@ -637,7 +637,7 @@
     <widget class="QPushButton" name="CheckNodeConnection">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>60</y>
        <width>151</width>
        <height>32</height>
@@ -653,7 +653,7 @@
     <widget class="QPushButton" name="CheckNodeSyncNTP">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>120</y>
        <width>151</width>
        <height>32</height>
@@ -669,7 +669,7 @@
     <widget class="QPushButton" name="CheckNodeSyncStatus">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>10</y>
        <width>151</width>
        <height>32</height>
@@ -702,7 +702,7 @@
       <x>960</x>
       <y>540</y>
       <width>191</width>
-      <height>121</height>
+      <height>111</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -714,7 +714,7 @@
     <widget class="QPushButton" name="OpenExplorer">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>10</y>
        <width>151</width>
        <height>32</height>
@@ -730,7 +730,7 @@
     <widget class="QPushButton" name="OpenExplorerWallet">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>40</y>
        <width>151</width>
        <height>32</height>
@@ -746,7 +746,7 @@
     <widget class="QPushButton" name="OpenExplorerAccount">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>80</y>
        <width>151</width>
        <height>32</height>
@@ -961,43 +961,33 @@
       <string>默认工作路径：</string>
      </property>
     </widget>
-    <widget class="QCheckBox" name="UseDefaultA1Account">
+    <widget class="QLineEdit" name="LineEditInput">
      <property name="geometry">
       <rect>
-       <x>510</x>
+       <x>520</x>
        <y>20</y>
-       <width>21</width>
-       <height>20</height>
+       <width>561</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string/>
+      <string>输入文本框，用于签名或者输入想要执行的命令，目的是复现各种故障</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="NodeBootWalletAddress">
+    <widget class="QPushButton" name="pushButtonClearLineInput">
      <property name="geometry">
       <rect>
-       <x>510</x>
-       <y>40</y>
-       <width>571</width>
-       <height>21</height>
+       <x>1070</x>
+       <y>0</y>
+       <width>61</width>
+       <height>32</height>
       </rect>
      </property>
-     <property name="text">
-      <string>默认以抵押对象的名义启动，但我现在想换成这个账户启动，一定不要输入您资金所在的钱包账户</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="RandomAddressDescriptionLabel">
-     <property name="geometry">
-      <rect>
-       <x>530</x>
-       <y>20</y>
-       <width>191</width>
-       <height>20</height>
-      </rect>
+     <property name="toolTip">
+      <string>清除文本命令输入框</string>
      </property>
      <property name="text">
-      <string>复制您生成的随机账户地址：</string>
+      <string>clear</string>
      </property>
     </widget>
    </widget>
@@ -1005,9 +995,9 @@
     <property name="geometry">
      <rect>
       <x>960</x>
-      <y>670</y>
+      <y>660</y>
       <width>191</width>
-      <height>151</height>
+      <height>161</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -1020,8 +1010,8 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>100</y>
-       <width>151</width>
+       <y>120</y>
+       <width>171</width>
        <height>41</height>
       </rect>
      </property>
@@ -1029,14 +1019,14 @@
       <string>生成命令行，并启动节点</string>
      </property>
      <property name="text">
-      <string>钱包对字符串签名</string>
+      <string>钱包对输入文本框签名</string>
      </property>
     </widget>
     <widget class="QPushButton" name="UploadLog">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>70</y>
+       <x>20</x>
+       <y>60</y>
        <width>151</width>
        <height>32</height>
       </rect>
@@ -1051,7 +1041,7 @@
     <widget class="QPushButton" name="CheckGMANVersion">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>30</y>
        <width>151</width>
        <height>32</height>
@@ -1067,7 +1057,7 @@
     <widget class="QPushButton" name="CompileGAN">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>0</y>
        <width>151</width>
        <height>32</height>
@@ -1078,6 +1068,22 @@
      </property>
      <property name="text">
       <string>手动编译GMAN</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="QPushButtonexecInputCMD">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>90</y>
+       <width>151</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>生成命令行，并启动节点</string>
+     </property>
+     <property name="text">
+      <string>执行文本框命令</string>
      </property>
     </widget>
    </widget>
@@ -1099,7 +1105,7 @@
     <widget class="QPushButton" name="DeployMinerNode">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>90</y>
        <width>151</width>
        <height>51</height>
@@ -1116,7 +1122,7 @@
     <widget class="QPushButton" name="GenerateRandomAccountAddress">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>10</y>
        <width>151</width>
        <height>41</height>
@@ -1132,7 +1138,7 @@
     <widget class="QPushButton" name="GenerateEntrustFile">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>50</y>
        <width>151</width>
        <height>41</height>
