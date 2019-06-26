@@ -34,13 +34,13 @@
       <rect>
        <x>670</x>
        <y>50</y>
-       <width>111</width>
+       <width>131</width>
        <height>51</height>
       </rect>
      </property>
      <property name="text">
       <string>无抵押账户？
-生成一个账户</string>
+生成一个随机账户</string>
      </property>
     </widget>
     <widget class="QRadioButton" name="ValidatorradioButton">
@@ -124,7 +124,7 @@
     <widget class="QPushButton" name="CloseWallet">
      <property name="geometry">
       <rect>
-       <x>780</x>
+       <x>800</x>
        <y>0</y>
        <width>121</width>
        <height>51</height>
@@ -154,7 +154,7 @@
       <rect>
        <x>670</x>
        <y>0</y>
-       <width>111</width>
+       <width>131</width>
        <height>51</height>
       </rect>
      </property>
@@ -166,7 +166,7 @@
     <widget class="QCheckBox" name="AutoCloseWallet">
      <property name="geometry">
       <rect>
-       <x>790</x>
+       <x>800</x>
        <y>50</y>
        <width>101</width>
        <height>20</height>
@@ -410,7 +410,7 @@
     <widget class="QLabel" name="label_9">
      <property name="geometry">
       <rect>
-       <x>550</x>
+       <x>540</x>
        <y>230</y>
        <width>51</width>
        <height>21</height>
@@ -509,7 +509,7 @@
      <rect>
       <x>960</x>
       <y>20</y>
-      <width>171</width>
+      <width>191</width>
       <height>191</height>
      </rect>
     </property>
@@ -519,61 +519,11 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="DeployMinerNode">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>50</y>
-       <width>151</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
-     </property>
-     <property name="text">
-      <string>部署挖矿节点
-(需指定抵押账户)</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="ResetNode">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>100</y>
-       <width>151</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
-     </property>
-     <property name="text">
-      <string>手动重启节点</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="NewNodeDepoly">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>1</y>
-       <width>151</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
-     </property>
-     <property name="text">
-      <string>自动化部署观察节点
-(无需账户）</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="StopNode">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>140</y>
+       <x>20</x>
+       <y>110</y>
        <width>151</width>
        <height>41</height>
       </rect>
@@ -585,14 +535,81 @@
       <string>节点停止工作</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="ResetNode">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>150</y>
+       <width>151</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>生成命令行，并启动节点</string>
+     </property>
+     <property name="text">
+      <string>手动重启节点</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>0</y>
+       <width>171</width>
+       <height>100</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QPushButton" name="DownloadTools">
+        <property name="toolTip">
+         <string>生成命令行，并启动节点</string>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>1 下载必备工具到本地</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="NodeInit">
+        <property name="toolTip">
+         <string>生成命令行，并启动节点</string>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>2 节点初始化</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="NewNodeDepoly">
+        <property name="toolTip">
+         <string>生成命令行，并启动节点</string>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>3 自动化部署观察节点</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
    <widget class="QFrame" name="frame_3">
     <property name="geometry">
      <rect>
       <x>960</x>
-      <y>230</y>
-      <width>171</width>
-      <height>141</height>
+      <y>370</y>
+      <width>191</width>
+      <height>161</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -605,7 +622,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>100</y>
+       <y>90</y>
        <width>151</width>
        <height>32</height>
       </rect>
@@ -621,7 +638,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>70</y>
+       <y>60</y>
        <width>151</width>
        <height>32</height>
       </rect>
@@ -637,7 +654,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>40</y>
+       <y>120</y>
        <width>151</width>
        <height>32</height>
       </rect>
@@ -665,13 +682,26 @@
       <string>检查节点同步状态</string>
      </property>
     </widget>
+    <widget class="QLabel" name="labelCurrentBlockHeight">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>161</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>当前块高：</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QFrame" name="frame_4">
     <property name="geometry">
      <rect>
       <x>960</x>
-      <y>380</y>
-      <width>171</width>
+      <y>540</y>
+      <width>191</width>
       <height>121</height>
      </rect>
     </property>
@@ -727,86 +757,6 @@
      </property>
      <property name="text">
       <string>个人收益预览</string>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QFrame" name="frame_5">
-    <property name="geometry">
-     <rect>
-      <x>960</x>
-      <y>520</y>
-      <width>171</width>
-      <height>141</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-    <widget class="QPushButton" name="DownloadTools">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>0</y>
-       <width>151</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
-     </property>
-     <property name="text">
-      <string>下载必备工具到本地</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="CompileGAN">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>40</y>
-       <width>151</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
-     </property>
-     <property name="text">
-      <string>手动编译GMAN</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="CheckGMANVersion">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>70</y>
-       <width>151</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
-     </property>
-     <property name="text">
-      <string>GMAN检查更新</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="UploadLog">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>110</y>
-       <width>151</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
-     </property>
-     <property name="text">
-      <string>上传诊断日志</string>
      </property>
     </widget>
    </widget>
@@ -971,7 +921,7 @@
      <rect>
       <x>20</x>
       <y>830</y>
-      <width>1111</width>
+      <width>1131</width>
       <height>71</height>
      </rect>
     </property>
@@ -1056,7 +1006,7 @@
      <rect>
       <x>960</x>
       <y>670</y>
-      <width>171</width>
+      <width>191</width>
       <height>151</height>
      </rect>
     </property>
@@ -1066,39 +1016,6 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="GenerateRandomAccountAddress">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>151</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
-     </property>
-     <property name="text">
-      <string>生成一个随机帐户</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="NodeInit">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>151</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
-     </property>
-     <property name="text">
-      <string>节点初始化
-（会去除部分数据）</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="GenerateRandomAccountAddress_2">
      <property name="geometry">
       <rect>
@@ -1115,6 +1032,119 @@
       <string>钱包对字符串签名</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="UploadLog">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>151</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>生成命令行，并启动节点</string>
+     </property>
+     <property name="text">
+      <string>上传诊断日志</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="CheckGMANVersion">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>151</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>生成命令行，并启动节点</string>
+     </property>
+     <property name="text">
+      <string>GMAN检查更新</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="CompileGAN">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>0</y>
+       <width>151</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>生成命令行，并启动节点</string>
+     </property>
+     <property name="text">
+      <string>手动编译GMAN</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="frame_5">
+    <property name="geometry">
+     <rect>
+      <x>960</x>
+      <y>220</y>
+      <width>191</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QPushButton" name="DeployMinerNode">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>90</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>生成命令行，并启动节点</string>
+     </property>
+     <property name="text">
+      <string>3 部署挖矿节点
+(使用抵押账户)</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="GenerateRandomAccountAddress">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>151</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>生成命令行，并启动节点</string>
+     </property>
+     <property name="text">
+      <string>1 生成一个随机帐户</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="GenerateEntrustFile">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>50</y>
+       <width>151</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>生成命令行，并启动节点</string>
+     </property>
+     <property name="text">
+      <string>2 生成账户委托签名</string>
+     </property>
+    </widget>
    </widget>
    <zorder>frame</zorder>
    <zorder>frame_9</zorder>
@@ -1122,9 +1152,9 @@
    <zorder>frame_7</zorder>
    <zorder>frame_6</zorder>
    <zorder>frame_3</zorder>
-   <zorder>frame_5</zorder>
    <zorder>frame_4</zorder>
    <zorder>frame_2</zorder>
+   <zorder>frame_5</zorder>
   </widget>
  </widget>
  <resources/>

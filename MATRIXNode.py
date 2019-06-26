@@ -93,6 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.NodeServiceText.document().setMaximumBlockCount(1000)
 
         self.browser=MATRIXWebutil()
+        self.DownloadThread=DownloadThread()
 
         self.show()
 
@@ -600,6 +601,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # TODO: not implemented yet
         raise NotImplementedError
 
+    def DownloadFinish(self,msg):
+        self.OnlyDisplay(f"auto download & Deploy gman! Msg is {msg}")
+
     @pyqtSlot()
     def on_DownloadTools_clicked(self):
         """
@@ -610,10 +614,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         rootdir = os.getcwd()
         print(f"We will download all file in {rootdir}{os.sep}Download/ Directory")
         self.OnlyDisplay(f"autoDownloadGman {self.url}")
-        self.MainFile = autoDownloadGman(self.url)
+
+        self.DownloadThread.start()
+        # 当获得循环完毕的信号时，停止计数
+        self.DownloadThread.trigger.connect(self.DownloadFinish)
+
+        #self.MainFile = autoDownloadGman(self.url)
 
         self.OnlyDisplay(f"autoDeployGman {self.MainFile}")
-        autoDeployGman(self.MainFile)
+        #autoDeployGman(self.MainFile)
+
+    @pyqtSlot()
+    def on_GenerateEntrustFile_clicked(self):
+        print("Generate Entrust file, it will open a dialog for entrust password input")
 
     @pyqtSlot()
     def on_CompileGAN_clicked(self):
@@ -857,9 +870,33 @@ class DisplaySubProcessInfoThread(QThread):
         print(msg)
         self.trigger.emit(msg)
 
+
+class DownloadThread(QThread):
+    # 定义一个信号
+    trigger = pyqtSignal(str)
+    url = 'https://www.matrix.io/downloads/'
+    MainFile='./gman'
+
+    def __int__(self,myurl='https://www.matrix.io/downloads/',parent=None):
+        # 初始化函数，默认
+        super(DownloadThread, self).__init__()
+        print(f"Download GMAN file from {myurl}....")
+        self.url=myurl
+
+    def run(self):
+        msg = f"download GMAN from {self.url}"
+        print(msg)
+        self.MainFile = autoDownloadGman(self.url)
+        msg = f"Deploy {self.MainFile}"
+        print(msg)
+        autoDeployGman(self.MainFile)
+
+        self.trigger.emit(msg)
+
 if __name__ == "__main__":
     fire.Fire()
     app = QApplication(sys.argv)
     ui = MainWindow()
+
 
     sys.exit(app.exec_())
