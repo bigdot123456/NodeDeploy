@@ -412,7 +412,7 @@ class Ui_MainWindow(object):
         self.CompileGAN.setText(_translate("MainWindow", "手动编译GMAN"))
         self.QPushButtonexecInputCMD.setToolTip(_translate("MainWindow", "懒得开界面窗口，直接在文本框执行命令"))
         self.QPushButtonexecInputCMD.setText(_translate("MainWindow", "执行文本框命令"))
-        self.DeployMinerNode.setToolTip(_translate("MainWindow", "<html><head/><body><p>对抵押账户进行部署，并启动。记得一定选择正确的目录。目前会自动在当前目录下建立work目录，然后进入work 目录工作。</p><p>chaindata应当放到work目录下。</p><p>如果输入密码不对，会启动失败，一定记得输入正确的密码，或者手动配置后输入key密码.</p><p>如果命令不对，一定会闪退！</p></body></html>"))
+        self.DeployMinerNode.setToolTip(_translate("MainWindow", "<html><head/><body><p>对抵押账户进行部署，并启动。记得一定选择正确的目录。目前会自动在当前目录下建立work目录，然后进入work 目录工作。</p><p>chaindata应当放到work目录下。</p><p>如果输入密码不对，会启动失败，一定记得输入正确的密码，或者手动配置后输入key密码.</p><p>如果命令不对，一定会闪退！</p><p>默认密码为：<span style=\" font-family:\'Menlo\'; font-size:18pt; color:#fc0107;\">ABCDabcd1234@1</span></p><p"))
         self.DeployMinerNode.setText(_translate("MainWindow", "3 部署挖矿节点\n"
 "(使用抵押账户)"))
         self.GenerateRandomAccountAddress.setToolTip(_translate("MainWindow", "需要启动一个gman程序，然后利用IPC命令获得账户，并自动作为抵押账户，当然也可以手动输入抵押账户"))

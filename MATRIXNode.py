@@ -50,13 +50,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     cmdResult = ""
 
     networkID=1
-    verbosityLevel = 3
-    output2File = 0
+    verbosityLevel = 5
+    output2File = 1
     rpcaddr = "0.0.0.0"
     syncmode = "full"
     gcmode = "archive"
 
     entrustPass=""
+    defaultPass="ABCDabcd1234@1"
 
     # self.ValidatorradioButton
     # self.FollowSuperNode
@@ -576,7 +577,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         }
 
         # 写入 JSON 数据
-        with open('key.json', 'w') as f:
+        keyfile='key.json'
+        if os.path.exists(keyfile):
+            postfix = datetime.datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
+            os.rename(keyfile, f"{keyfile}{postfix}")
+        with open(keyfile, 'w') as f:
             f.write("[\n")
             json.dump(json_dict, f)
             f.write("\n]")
@@ -660,8 +665,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def loadKeyandPassword(self):
 
         keyname=f"{self.NodeRootDir}{os.sep}work{os.sep}key.json"
-        with open(keyname, 'r') as f:
-            data_check = json.load(f)
+        try:
+            with open(keyname, 'r') as f:
+                data_check = json.load(f)
+        except:
+            print("No default A1 address exist, you should change directory or generate one!")
+            return False
 
         if data_check!="":
             self.a1_Address=data_check[0]['Address']
@@ -792,12 +801,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ui.simplepassword.hide()
             r = ui.exec_()
             if not r:
-                password="MATRIX$World@66#"
+                #password="MATRIX$World@66#"
+                password = self.defaultPass
                 print("We will use default Password")
             else:
                 password=ui.text
         else:
-            password="MATRIX$World#99!"
+            password= self.defaultPass
 
         # testmode parameter is not ok, therefore we must use pexpect
         cmd=f"{gman} --datadir {chaindatadir} aes --aesin {keyfile} --aesout {entrustfile} "
@@ -847,7 +857,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        # raise NotImplementedError
+        msg=f"请到当前目录下的work/MatrixLog拷贝文件，并压缩上传到MATRIX的服务器上"
+        msg1=f"Current Log file located at {self.NodeRootDir}{os.sep}work{os.sep}MatrixLog, Please zip it!\nThen upload to upload.matrix.io"
+        QMessageBox.about(self,msg,msg1)
 
     @pyqtSlot()
     def on_QPushButtonexecInputCMD_clicked(self):
@@ -973,7 +986,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # testmode parameter is not ok, therefore we must use pexpect
         cmdorg = "gman --datadir chaindata --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 666 --debug --verbosity 5 --manAddress MAN.2UMgrmoFTq2urw1xKBgx5XfpFnhR3 --entrust entrust.json --gcmode archive --outputinfo 1 --syncmode full "
 
-
+        print("We will stop all old Node and start a new site")
+        self.on_StopNode_clicked()
         print(ServerArgs)
         self.browser.saveExec(ServerArgs)
 

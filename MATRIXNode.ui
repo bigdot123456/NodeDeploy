@@ -1050,7 +1050,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;对抵押账户进行部署，并启动。记得一定选择正确的目录。目前会自动在当前目录下建立work目录，然后进入work 目录工作。&lt;/p&gt;&lt;p&gt;chaindata应当放到work目录下。&lt;/p&gt;&lt;p&gt;如果输入密码不对，会启动失败，一定记得输入正确的密码，或者手动配置后输入key密码.&lt;/p&gt;&lt;p&gt;如果命令不对，一定会闪退！&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;对抵押账户进行部署，并启动。记得一定选择正确的目录。目前会自动在当前目录下建立work目录，然后进入work 目录工作。&lt;/p&gt;&lt;p&gt;chaindata应当放到work目录下。&lt;/p&gt;&lt;p&gt;如果输入密码不对，会启动失败，一定记得输入正确的密码，或者手动配置后输入key密码.&lt;/p&gt;&lt;p&gt;如果命令不对，一定会闪退！&lt;/p&gt;&lt;p&gt;默认密码为：&lt;span style=&quot; font-family:'Menlo'; font-size:18pt; color:#fc0107;&quot;&gt;ABCDabcd1234@1&lt;/span&gt;&lt;/p&gt;&lt;p</string>
      </property>
      <property name="text">
       <string>3 部署挖矿节点
