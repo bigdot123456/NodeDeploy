@@ -37,6 +37,7 @@ class MATRIXPasswordDiaglog(QDialog):
         self.setWindowTitle("密码输入框")
 
         self.lb = QLabel("请输入密码：", self)
+        self.lbok = QLabel("等待输入密码状态", self)
 
         self.edit = QLineEdit(self)
         self.edit.installEventFilter(self)  # 输入框安装事件过滤器
@@ -48,6 +49,7 @@ class MATRIXPasswordDiaglog(QDialog):
         self.bt1 = QPushButton("确定", self)
         self.bt2 = QPushButton("取消", self)
         self.viewpassword = QCheckBox("明文显示密码", self)
+        self.simplepassword = QCheckBox("我嫌麻烦，不考虑安全性，就用简单密码", self)
 
         hbox = QHBoxLayout()
         hbox.addStretch(1)
@@ -57,11 +59,13 @@ class MATRIXPasswordDiaglog(QDialog):
         hbox.addStretch(1)
 
         vbox = QVBoxLayout()
+        vbox.addWidget(self.lbok)
         vbox.addWidget(self.lb)
         vbox.addWidget(self.edit)
         vbox.addWidget(self.lb1)
         vbox.addWidget(self.edit1)
         vbox.addWidget(self.viewpassword)
+        vbox.addWidget(self.simplepassword)
 
         vbox.addStretch(1)
         vbox.addLayout(hbox)
@@ -95,19 +99,27 @@ class MATRIXPasswordDiaglog(QDialog):
         # 1、长度不能8～16位；
         # 2、符号由数字,大写字母,小写字母,特殊符,至少其中三种组成；
 
-
-        line = self.edit.text()
-
-        # matchObj = re.match(r'^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$', line, re.M | re.I)
-
-        matchObj = re.match(r"^.*(?=.{6,16})(?=.*\d)(?=.*[A-Z]{2,})(?=.*[a-z]{2,})(?=.*[!@#$%^&*?\(\)]).*$", line)
-
-        if matchObj:
-            print("设置密码合格，符号至少由1个数字,2大写字母,2小写字母,1个特殊符组成")
-            # matchObj.group()
+        if self.simplepassword.checkState():
+            self.lbok.setText("You will use simple Password, we will not check it")
         else:
-            print(f"密码不合格!{line}")
-            QMessageBox.warning(self, "警告", "密码不符合要求，符号至少由1个数字,2大写字母,2小写字母,1个特殊符组成")
+            line = self.edit.text()
+
+            # matchObj = re.match(r'^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$', line, re.M | re.I)
+
+            matchObj = re.match(r"^.*(?=.{6,16})(?=.*\d)(?=.*[A-Z]{2,})(?=.*[a-z]{2,})(?=.*[!@#$%^&*?\(\)]).*$", line)
+
+            if matchObj:
+                msg="设置密码合格，符号包含了至少1个数字,2大写字母,2小写字母,1个特殊符组成"
+                print(msg)
+                self.lbok.setText(msg)
+                # matchObj.group()
+                return True
+            else:
+                msg="密码不符合要求，符号至少由1个数字,2大写字母,2小写字母,1个特殊符组成"
+                print(f"密码不合格!{line}")
+                self.lbok.setText(msg)
+                # QMessageBox.warning(self, "警告", msg)
+                return False
 
         # 构造一个验证器，QLineEdit对象接受与正则表达式匹配的所有字符串。匹配是针对整个字符串。
 
@@ -144,7 +156,7 @@ class MATRIXPasswordDiaglog(QDialog):
                 QMessageBox.warning(self, "警告", "密码为空")
             elif len(self.text) < 8:
                 QMessageBox.warning(self, "警告", "密码长度低于8位")
-            else:
+            elif self.simplepassword.checkState() or self.checkPasswordValid():
                 self.done(1)
 
     def Cancel(self):

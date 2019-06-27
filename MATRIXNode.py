@@ -4,7 +4,7 @@
 Module implementing MainWindow.
 """
 
-import shlex
+import json
 
 import fire
 from PyQt5 import QtCore
@@ -12,13 +12,15 @@ from PyQt5 import QtCore
 from MATRIXCMDSever import *
 from MATRIXCmd import *
 from MATRIXGetURLContent import *
+from MATRIXPassword import *
 from MATRIXStringTools import *
 # from MATRIXRunCMD import *
 from MATRIXWebutil import *
 # from PyQt5.QtWidgets import QMainWindow
 # from PyQt5.QtCore import pyqtSlot
 from Ui_MATRIXNode import Ui_MainWindow
-from MATRIXPassword import *
+from MATRIXPexpect import *
+from NodeConfig import *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
@@ -39,14 +41,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     select_actor = "SuperNode"
     NodeRootDir = f".{os.sep}"
     MainFile = "gman"
-    browser=""
+    browser = ""
 
     url = 'https://www.matrix.io/downloads/'
 
     cmdNum = 0
-    NodeServer=""
+    NodeServer = ""
+    cmdResult = ""
 
-    cmdResult=""
+    networkID=1
+    verbosityLevel = 3
+    output2File = 0
+    rpcaddr = "0.0.0.0"
+    syncmode = "full"
+    gcmode = "archive"
+
+    entrustPass=""
 
     # self.ValidatorradioButton
     # self.FollowSuperNode
@@ -92,9 +102,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.NodeBootLogText.document().setMaximumBlockCount(1000)
         self.NodeServiceText.document().setMaximumBlockCount(1000)
 
-        self.browser=MATRIXWebutil()
-        self.DownloadThread=DownloadThread()
+        self.browser = MATRIXWebutil()
+        self.DownloadThread = DownloadThread()
 
+        self.NodeRootDir = os.getcwd()
+        self.DefaultWorkDirLabel.setText(self.NodeRootDir)
         self.show()
 
     def closeEvent(self, event):
@@ -405,7 +417,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        # raise NotImplementedError
+        self.on_GenerateRandomAccountAddress_clicked()
 
     @pyqtSlot()
     def on_CloseWallet_clicked(self):
@@ -439,24 +452,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # TODO: not implemented yet
         raise NotImplementedError
 
-    @pyqtSlot()
-    def on_GenerateRandomAccountAddress_clicked(self):
-        """
-        Slot documentation goes here.
-        """
-        # TODO: not implemented yet
-        # raise NotImplementedError
-        print("Generate a random Account for deposit! You should input password for this account!")
-        pwd = MATRIXPasswordDiaglog()  # DIY密码输入框
-        r = pwd.exec_()  # 执行密码输入框
-        if not r:
-            print("You discard generating password and can't generate a random account!")
-            return
-        else:
-            passwordOK=pwd.text
-            print(f"password is {passwordOK}")
+    def checkGMAN(self):
 
-        rootdir = os.getcwd()
+        os.chdir(self.NodeRootDir)
         workdir = f".{os.sep}work"
 
         try:
@@ -465,33 +463,129 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             result = "Error in change directory! You should change to correct Path which contain gman"
             print(result)
-            self.cmdResult=result
+            self.cmdResult = result
             self.OnlyDisplay("Account A1 Generation", result)
+            os.chdir(self.NodeRootDir)
             return False
 
-        ipcname=f".{os.sep}chaindata{os.sep}gman.ipc"
-        gman=f".{os.sep}{self.browser.gmanName}"
-        #cmd=f"echo \"personal.newAccount(\\\"{passwordOK}\\\")\" | {gman} attach {ipcname} | grep 'MAN.' "
-        cmd = f"echo \"personal.newAccount(\\\"{passwordOK}\\\")\" | {gman} attach {ipcname} "
+        try:
+            f = open(self.browser.gmanName)
+            f.close()
 
-        line=self.executeAndDisplay(cmd)
-        matchObj = re.split(r'(")(MAN\.[a-km-zA-HJ-NP-Z1-9]{2,34})(")', line)
-        #r'(")(MAN\.[a-km-zA-HJ-NP-Z1-9]{2,34})(")'
+        except IOError:
+            result = "Error in open GMAN! You should change to correct Path which contain gman"
+            print(result)
+            self.cmdResult = result
+            self.OnlyDisplay("Account A1 Generation", result)
+            QMessageBox.warning(self,"GMAN Doesn't exist in current directory! Please Change directory or download it!","GMAN Doesn't exist in current directory! Please Change current directory or download it!\n主程序gman不存在当前目录的work目录下，无法继续执行，请注意！")
+            os.chdir(self.NodeRootDir)
+            return False
 
-        if matchObj:
-            self.a1_Address=matchObj[2]
-            print(f"成功生成账户{self.a1_Address}")
-            # matchObj.group()
+        return True
+
+    def grepMANAddress(self,line):
+        manflag="MAN"
+        if manflag in line:
+            matchObj = re.split(r'(")(MAN\.[a-km-zA-HJ-NP-Z1-9]{2,34})(")', line)
+            # r'(")(MAN\.[a-km-zA-HJ-NP-Z1-9]{2,34})(")'
+
+            if matchObj:
+                for i in matchObj:
+                    if manflag in i:
+                        self.a1_Address = i
+                        print(f"成功生成账户{self.a1_Address}")  # self.a1_Address =matchObj[2]
+                        return True
+                # matchObj.group()
         else:
             print(f"检查是否启动GMAN节点，结果为!{line}")
-            QMessageBox.warning(self, "警告", f"检查是否启动GMAN节点，输出日志为：{line}")
+            #QMessageBox.warning(self, "警告", f"检查是否启动GMAN节点，输出日志为：{line}")
 
-        print(f"A1 Address is {self.a1_Address}")
+        return False
+
+    @pyqtSlot()
+    def on_GenerateRandomAccountAddress_clicked(self):
+        """
+        Slot documentation goes here.
+        """
+        # TODO: not implemented yet
+        # raise NotImplementedError
+        print("Generate a random Account for deposit! You should input password for this account!")
+
+        if not self.checkGMAN():
+            #os.chdir(self.NodeRootDir)
+            return False
+
+        pwd = MATRIXPasswordDiaglog()  # DIY密码输入框
+        r = pwd.exec_()  # 执行密码输入框
+        if not r:
+            print("You discard generating password and can't generate a random account!")
+            return
+        else:
+            passwordOK = pwd.text
+            print(f"password is {passwordOK}")
+
+        ipcname = f".{os.sep}chaindata{os.sep}gman.ipc"
+        gman = f".{os.sep}{self.browser.gmanName}"
+
+        # cmd=f"echo \"personal.newAccount(\\\"{passwordOK}\\\")\" | {gman} attach {ipcname} | grep 'MAN.' "
+        cmd = f"echo \"personal.newAccount(\\\"{passwordOK}\\\")\" | {gman} attach {ipcname} "
+
+        line = self.executeAndDisplay(cmd)
+
+        if self.grepMANAddress(line):
+            print(f"Succussful generating A1 Address: {self.a1_Address}")
+
+        else:
+            QMessageBox.warning(self, "警告", f"检查是否启动GMAN节点，输出日志为：{line}")
+            return False
 
         self.entrustAccount.setText(self.a1_Address)
         self.WalletAddressLabel.setText(f"设定委托账户为当前随机账户{self.a1_Address}，请保管好账户密码")
+        demo_json = """
+        [
+                {
+                    "Address":"MAN.427Suh4uPVqdBzrSbn2u6FrNz9rYj",
+                    "Password":"testPassword"
+                },
+                {
+                    "Address":"MAN.7nk8CuT9ZCBfSfYpfiXaomHvk4Nn",
+                    "Password":"xxx"
+                },
+                {
+                    "Address":"MAN.49nECVaeeHYQ2H8t91r33yrfCMhXA",
+                    "Password":"xxx"
+                },
+                {
+                    "Address":"MAN.2SaM3sU8K6bAEG4eA15g6ZtwA5UuZ",
+                    "Password":"xxx"
+                },
+                {
+                    "Address":"MAN.4GoTEXV33PEaRrHL1rA46UtZsDtaz",
+                    "Password":"xxx"
+                },
+                {
+                    "Address":"MAN.3keXfyBY2HRkRNYvhaynkGD6ezmNh",
+                    "Password":"xxx"
+                }
+            ]
+        """
+        # save result to json file
+        json_dict = {
+            'Address': self.a1_Address,
+            'Password': passwordOK
+        }
 
-        os.chdir(rootdir)
+        # 写入 JSON 数据
+        with open('key.json', 'w') as f:
+            f.write("[\n")
+            json.dump(json_dict, f)
+            f.write("\n]")
+
+        # 读取数据
+        with open('key.json', 'r') as f:
+            data_check = json.load(f)
+
+        os.chdir(self.NodeRootDir)
 
     @pyqtSlot()
     def on_NodeInit_clicked(self):
@@ -500,26 +594,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         # TODO: not implemented yet
         # raise NotImplementedError
-        rootdir = os.getcwd()
-        print(f"We will enter to {rootdir},and then start ./work/gman")
-        workdir = f".{os.sep}work"
-        execfile=f".{os.sep}{self.browser.gmanName}"
+        # rootdir = self.DefaultWorkDirLabel.text() #os.getcwd()
 
-        cmd = f"{execfile} --datadir ./chaindata  init MANGenesis.json"
+        if not self.checkGMAN():
+            #os.chdir(self.NodeRootDir)
+            return False
 
-        try:
-            os.chdir(workdir)
-            f = open(execfile)
-            f.close()
-        except IOError:
-            result = f"Error with openning {cmd}! You should change to correct Path which contain gman"
-            print(result)
+        gman = f".{os.sep}{self.browser.gmanName}"
 
-            self.OnlyDisplay(cmd, result)
-            self.cmdResult=result
-            return
+        cmd = f"{gman} --datadir ./chaindata  init MANGenesis.json"
 
-        print(f"Init Gman with command:\ncd {workdir};\n{execfile} --datadir ./chaindata  init MANGenesis.json \n\n")
+        print(f"Init Gman with command:\ncd work;\n{gman} --datadir ./chaindata  init MANGenesis.json \n\n")
         self.executeAndDisplay(cmd)
         # child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         # outs, errs = child1.communicate()
@@ -531,17 +616,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.cmdLogText.setPlainText(cmd)
         # self.listWidget.addItem(cmd)
         # self.NodeBootLogText.append(output)
-        QMessageBox.about(self,"MATRIX初始化节点状态",f"执行命令为：{cmd},执行结果为\n{self.cmdResult}")
+        QMessageBox.about(self, "MATRIX初始化节点状态", f"执行命令为：{cmd},执行结果为\n{self.cmdResult}")
 
-        os.chdir(rootdir)
+        os.chdir(self.NodeRootDir)
 
     @pyqtSlot()
-    def on_GenerateRandomAccountAddress_2_clicked(self):
+    def on_SignatureInputCMD_clicked(self):
         """
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        # raise NotImplementedError
+        text = self.LineEditInput.text()
+        print(f"signature the input text:{text}!")
 
     @pyqtSlot()
     def on_SetDefaultWorkDir_clicked(self):
@@ -566,8 +653,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             cmd = f"cd {self.NodeRootDir}"
 
             self.OnlyDisplay(cmd)
+            self.loadKeyandPassword()
         else:
             print(f"You cancel the folder selection, we will work in default dir:{self.NodeRootDir}")
+
+    def loadKeyandPassword(self):
+
+        keyname=f"{self.NodeRootDir}{os.sep}work{os.sep}key.json"
+        with open(keyname, 'r') as f:
+            data_check = json.load(f)
+
+        if data_check!="":
+            self.a1_Address=data_check[0]['Address']
+            #self.entrustPass=data_check[0]['Password']
+            self.entrustAccount.setText(self.a1_Address)
+            self.WalletAddressLabel.setText("We will use default directory A1 address!")
+            print("Use default key & password")
 
     # def OpenDirectory():
     #     directory1 = QFileDialog.getExistingDirectory(self,"选取文件夹", "./")  # 起始路径
@@ -596,10 +697,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
+        # raise NotImplementedError
         self.NodeBootLogText.reload()
         ## should add some code here for server and client
-
 
     @pyqtSlot()
     def on_NodeServiceRefresh_clicked(self):
@@ -607,8 +707,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
-        output="Refresh Finished ! Press button to Get more text!"
+        # raise NotImplementedError
+        output = "Refresh Finished ! Press button to Get more text!"
 
         self.NodeServiceText.append(output)
 
@@ -647,7 +747,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # TODO: not implemented yet
         raise NotImplementedError
 
-    def DownloadFinish(self,msg):
+    def DownloadFinish(self, msg):
         self.OnlyDisplay(f"auto download & Deploy gman! Msg is {msg}")
 
     @pyqtSlot()
@@ -665,14 +765,65 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 当获得循环完毕的信号时，停止计数
         self.DownloadThread.trigger.connect(self.DownloadFinish)
 
-        #self.MainFile = autoDownloadGman(self.url)
+        # self.MainFile = autoDownloadGman(self.url)
 
         self.OnlyDisplay(f"autoDeployGman {self.MainFile}")
-        #autoDeployGman(self.MainFile)
+        # autoDeployGman(self.MainFile)
 
     @pyqtSlot()
     def on_GenerateEntrustFile_clicked(self):
         print("Generate Entrust file, it will open a dialog for entrust password input")
+        if not self.checkGMAN():
+            #os.chdir(self.NodeRootDir)
+            return False
+
+        gmandir = f"{os.getcwd()}"
+        chaindatadir = f"{os.getcwd()}{os.sep}chaindata"
+        gman=f"{gmandir}{os.sep}{self.browser.gmanName}"
+        keyfile=f"{gmandir}{os.sep}key.json"
+        entrustfile=f"{gmandir}{os.sep}entrust.json"
+
+        if os.path.exists(entrustfile):
+            postfix=datetime.datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
+            os.rename(entrustfile,f"{entrustfile}{postfix}")
+
+        if self.checkboxManualConfigNode.checkState():
+            ui = MATRIXPasswordDiaglog()
+            ui.simplepassword.hide()
+            r = ui.exec_()
+            if not r:
+                password="MATRIX$World@66#"
+                print("We will use default Password")
+            else:
+                password=ui.text
+        else:
+            password="MATRIX$World#99!"
+
+        # testmode parameter is not ok, therefore we must use pexpect
+        cmd=f"{gman} --datadir {chaindatadir} aes --aesin {keyfile} --aesout {entrustfile} "
+
+        child = GMANEntrustPexpect(cmd, password)
+
+        # time.sleep(1)
+        if os.path.exists(entrustfile):
+            msg=f"Generating entrust file {entrustfile} successfully"
+            QMessageBox.about(self, "通知", msg)
+
+            self.entrustPass=password
+        else:
+            print("Can not find the entrust file")
+            msg=f"没有生成entrust文件，请检查是否启动GMAN节点，输出日志为：{child.before}"
+            QMessageBox.about(self, "通知", msg)
+
+        self.OnlyDisplay(cmd,msg)
+        # if self.grepMANAddress(line):
+        #     print(f"Succussful generating A1 Address: {self.a1_Address}")
+        #
+        # else:
+        #     QMessageBox.warning(self, "警告", f"检查是否启动GMAN节点，输出日志为：{line}")
+        #     return False
+        #
+        os.chdir(self.NodeRootDir)
 
     @pyqtSlot()
     def on_CompileGAN_clicked(self):
@@ -705,7 +856,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         # TODO: not implemented yet
         # raise NotImplementedError
-        cmd=self.LineEditInput.text()
+        cmd = self.LineEditInput.text()
         print(f"We will execute the command {cmd} from line input line box")
 
         self.executeAndDisplay(cmd)
@@ -716,14 +867,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
+        # raise NotImplementedError
 
-        url="http://kfc.matrix.io"
+        url = "http://kfc.matrix.io"
 
         self.browser.openurl(url)
         self.OnlyDisplay(f"start {url}")
-        #MATRIXWebutil.open_new(url)
-        #MATRIXWebutil.open_new_tab(url)
+        # MATRIXWebutil.open_new(url)
+        # MATRIXWebutil.open_new_tab(url)
 
     @pyqtSlot()
     def on_OpenExplorerWallet_clicked(self):
@@ -731,7 +882,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
+        # raise NotImplementedError
         url = "http://wallet.matrix.io"
 
         self.browser.openurl(url)
@@ -743,7 +894,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
+        # raise NotImplementedError
         url = f"http://kfc.matrix.io/{self.a0_Address}"
 
         self.browser.openurl(url)
@@ -755,7 +906,82 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        raise NotImplementedError
+        # raise NotImplementedError
+        if not self.checkGMAN():
+            #os.chdir(self.NodeRootDir)
+            return False
+
+        gmandir = f"{os.getcwd()}"
+        chaindatadir = f"{os.getcwd()}{os.sep}chaindata"
+        gman=f"{gmandir}{os.sep}{self.browser.gmanName}"
+        #keyfile=f"{gmandir}{os.sep}key.json"
+        entrustfile=f"{gmandir}{os.sep}entrust.json"
+
+        if self.a1_Address=="":
+            QMessageBox.about(self,"没有输入Address地址","Please Input A1 Address, don't leave it blank, you generate a new address!")
+            return False
+
+        if not MATRIXCmd.checkAddressValid(self.a1_Address):
+            QMessageBox.about(self,"输入Address地址有误",f"Please Correct A1 Address:{self.a1_Address}, It contain Error!")
+            return False
+
+        if self.checkboxManualConfigNode.checkState():
+            ui = ConfigNodeNormal()
+            r=ui.exec_()
+            if not r:
+                print("you give up the configuration, and will use default parameter!")
+                ServerArgs = f"{gman} --datadir {chaindatadir} --rpc --rpcaddr {self.rpcaddr} --rpccorsdomain '*' --networkid {self.networkID} --debug --verbosity {self.verbosityLevel} --manAddress {self.a1_Address} --entrust {entrustfile} --gcmode {self.gcmode} --outputinfo {self.output2File} --syncmode {self.syncmode}"
+            else:
+                self.output2File= ui.checkBoxDebug2File
+                self.rpcaddr=ui.lineEditRPCAddress.text()
+                self.networkID=ui.lineEditNetworkID.text()
+
+                if ui.checkBoxGCMode.checkState():
+                    self.gcmode="archive"
+                else:
+                    self.gcmode="none"
+
+                self.verbosityLevel=ui.horizontalSliderDebugInfo.value()
+                OtherPara=ui.lineEditOtherPara.text()
+
+                if self.entrustPass == "":
+                    # QMessageBox.about(self, "请手动输入entrust文件的password", f"Please Input entrust Password correctly!\n If It not ok!")
+
+                    text, okPressed = QInputDialog.getText(self, "获取信息",
+                                                           "请输入密码，一定输入委托加密密码，不是账户的密码\n，该密码包含各种特殊字符，输入不对，会不能启动节点",
+                                                           QLineEdit.Normal)
+
+                    if okPressed and text != "":
+                        #self.entrustPass = text
+                        print("We will use input password!")
+                        ServerArgs = f"{gman} --datadir {chaindatadir} --rpc --rpcaddr {self.rpcaddr} --rpccorsdomain '*' --networkid {self.networkID} --debug --verbosity {self.verbosityLevel} --manAddress {self.a1_Address} --entrust {entrustfile} --gcmode {self.gcmode} --outputinfo {self.output2File} --syncmode {self.syncmode} {OtherPara} --tesmode {text}"
+                    else:
+                        print("No password! Node can't start!Maybe error")
+
+                        ServerArgs = f"{gman} --datadir {chaindatadir} --rpc --rpcaddr {self.rpcaddr} --rpccorsdomain '*' --networkid {self.networkID} --debug --verbosity {self.verbosityLevel} --manAddress {self.a1_Address} --entrust {entrustfile} --gcmode {self.gcmode} --outputinfo {self.output2File} --syncmode {self.syncmode} {OtherPara} "
+                else:
+                    ServerArgs = f"{gman} --datadir {chaindatadir} --rpc --rpcaddr {self.rpcaddr} --rpccorsdomain '*' --networkid {self.networkID} --debug --verbosity {self.verbosityLevel} --manAddress {self.a1_Address} --entrust {entrustfile} --gcmode {self.gcmode} --outputinfo {self.output2File} --syncmode {self.syncmode} {OtherPara} --tesmode {self.entrustPass}"
+
+
+        else:
+            if self.entrustPass == "":
+
+                ServerArgs = f"{gman} --datadir {chaindatadir} --rpc --rpcaddr {self.rpcaddr} --rpccorsdomain '*' --networkid {self.networkID} --debug --verbosity {self.verbosityLevel} --manAddress {self.a1_Address} --entrust {entrustfile} --gcmode {self.gcmode} --outputinfo {self.output2File} --syncmode {self.syncmode} "
+            else:
+                ServerArgs = f"{gman} --datadir {chaindatadir} --rpc --rpcaddr {self.rpcaddr} --rpccorsdomain '*' --networkid {self.networkID} --debug --verbosity {self.verbosityLevel} --manAddress {self.a1_Address} --entrust {entrustfile} --gcmode {self.gcmode} --outputinfo {self.output2File} --syncmode {self.syncmode} --testmode {self.entrustPass}"
+
+        # testmode parameter is not ok, therefore we must use pexpect
+        cmdorg = "gman --datadir chaindata --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --networkid 666 --debug --verbosity 5 --manAddress MAN.2UMgrmoFTq2urw1xKBgx5XfpFnhR3 --entrust entrust.json --gcmode archive --outputinfo 1 --syncmode full "
+
+
+        print(ServerArgs)
+        self.browser.saveExec(ServerArgs)
+
+        self.NodeServiceText.append(f"在{os.getcwd()}下执行命令:\n{ServerArgs}\n请在窗口观察结果")
+        QMessageBox.about(self, "MATRIX初始化节点状态",
+                          f"执行命令为：{ServerArgs},执行结果请查看对应窗口，如果是MAC平台，请注意安装Xterm，或者在terminal窗口执行命令")
+
+        os.chdir(self.NodeRootDir)
 
     @pyqtSlot()
     def on_ResetNode_clicked(self):
@@ -771,18 +997,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
-        rootdir = os.getcwd()
-        workdir = f".{os.sep}work"
+        # raise NotImplementedError
+        print("We will deploy a new node, Nothing need to input!!")
 
-        try:
-            os.chdir(workdir)
-        except:
-
-            result = "Error in change directory! You should change to correct Path which contain gman"
-            print(result)
-            self.cmdResult=result
-            self.OnlyDisplay("gman deploy", result)
+        if not self.checkGMAN():
+            #os.chdir(self.NodeRootDir)
             return False
 
         gmandir = f"{os.getcwd()}"
@@ -793,8 +1012,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.browser.saveExec(ServerArgs)
 
         self.NodeServiceText.append(f"执行命令:{ServerArgs},请在窗口观察结果")
-        QMessageBox.about(self,"MATRIX初始化节点状态",f"执行命令为：{ServerArgs},执行结果请查看对应窗口，如果是MAC平台，请注意安装Xterm，或者在terminal窗口执行命令")
-        os.chdir(rootdir)
+        QMessageBox.about(self, "MATRIX初始化节点状态",
+                          f"执行命令为：{ServerArgs},执行结果请查看对应窗口，如果是MAC平台，请注意安装Xterm，或者在terminal窗口执行命令")
+
+        os.chdir(self.NodeRootDir)
 
     def startThreadMonitor(self):
         self.NodeSubProcess.run()
@@ -805,7 +1026,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
+        # raise NotImplementedError
         print("We will kill all gman process!")
         reply = QMessageBox.question(self, '确认', '确认kill所有gman任务吗', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 
@@ -815,7 +1036,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             print("Keep GMAN run.......!")
 
-        cmd="kill -9  `ps -ef | grep  -v grep  | grep  gman | grep 'networkid'  | awk '{print $2}'`"
+        cmd = "kill -9  `ps -ef | grep  -v grep  | grep  gman | grep 'networkid'  | awk '{print $2}'`"
         self.executeAndDisplay(cmd)
 
     @pyqtSlot()
@@ -832,37 +1053,52 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         # TODO: not implemented yet
-        #raise NotImplementedError
+        # raise NotImplementedError
         print("clear command line input!")
         self.LineEditInput.clear()
         self.LineEditInput.setText("")
         self.LineEditInput.setFocus()
 
+    @pyqtSlot()
+    def on_pushButtonAbout_clicked(self):
+        """
+        Slot documentation goes here.
+        """
+        # TODO: not implemented yet
+        # raise NotImplementedError
+        helpurl = "http://www.matrix.io/help"
+        helpmsg = f"We will Display the help dialog Box! If you are new node, just deploy with download/init site/start " \
+            f"a node step!\nIf you have a deposit, please deploy with the following step:\n1.generate a random " \
+            f"deposit accout.\n2.signature it with password.\n3.deploy this account! "
+        self.OnlyDisplay(f"Open Help mainpage {helpurl}", helpmsg)
+        QMessageBox.about(self, "MATRIX Node Help", f"Please visit {helpurl} to get more information")
+        self.browser.openurl(helpurl)
 
     def executeAndDisplay(self, cmd):
         print(f"Run Cmd:\n{cmd}")
-        #localargs = shlex.split(cmd)
+        # localargs = shlex.split(cmd)
         #
-        #for s in localargs :
+        # for s in localargs :
         #    print(f"part {s}\n")
         #
-        #if not os.path.exists(localargs[0]):
+        # if not os.path.exists(localargs[0]):
         #    result=f"error! file {localargs[0]} not exists!"
         #    print(result)
         #    self.cmdResult = result
         #    return False
 
-        #try:
+        # try:
         #    f = open(localargs[0])
         #    f.close()
-        #except IOError:
+        # except IOError:
         #    result = f"Error in change directory or File doesn't exist! You should change to correct Path which contain {localargs[0]}"
         #    print(result)
         #    self.cmdResult=result
         #    return False
-         
-        child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE,stdin=subprocess.PIPE)
-        #child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+
+        child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                  stdin=subprocess.PIPE)
+        # child1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
 
         outs, errs = child1.communicate()
 
@@ -889,7 +1125,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cmdNum = self.cmdNum + 1
         self.listWidget.addItem(f"{self.cmdNum}:{cmd}")
         self.NodeBootLogText.append(f"CMD {self.cmdNum} result:\n{output}\n++++++++ output Finished!\n")
-        self.cmdResult=output
+        self.cmdResult = output
         self.NodeBootLogText.show()
         return output
 
@@ -924,26 +1160,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def update_Node_info(self, data):
         """更新内容"""
-        #self.setItem(0, 0, QTableWidgetItem(data))  # 设置表格内容(行， 列) 文字
+        # self.setItem(0, 0, QTableWidgetItem(data))  # 设置表格内容(行， 列) 文字
         self.NodeServiceText.append(data)
 
 
 class DisplaySubProcessInfoThread(QThread):
     # 定义一个信号
     trigger = pyqtSignal(str)
-    tt=0
+    tt = 0
 
-    def __int__(self,cmd="",parent=None):
+    def __int__(self, cmd="", parent=None):
         # 初始化函数，默认
         super(DisplaySubProcessInfoThread, self).__init__()
-        self.cmd=cmd
+        self.cmd = cmd
         print(f"exec command {self.cmd}")
 
     def run(self):
         self.sleep(1)
         # 等待5秒后，给触发信号，并传递test
-        self.tt=self.tt+1
-        msg=f"{self.cmd} thread time {self.tt}"
+        self.tt = self.tt + 1
+        msg = f"{self.cmd} thread time {self.tt}"
         print(msg)
         self.trigger.emit(msg)
 
@@ -952,13 +1188,13 @@ class DownloadThread(QThread):
     # 定义一个信号
     trigger = pyqtSignal(str)
     url = 'https://www.matrix.io/downloads/'
-    MainFile='./gman'
+    MainFile = './gman'
 
-    def __int__(self,myurl='https://www.matrix.io/downloads/',parent=None):
+    def __int__(self, myurl='https://www.matrix.io/downloads/', parent=None):
         # 初始化函数，默认
         super(DownloadThread, self).__init__()
         print(f"Download GMAN file from {myurl}....")
-        self.url=myurl
+        self.url = myurl
 
     def run(self):
         msg = f"download GMAN from {self.url}"
@@ -970,10 +1206,10 @@ class DownloadThread(QThread):
 
         self.trigger.emit(msg)
 
+
 if __name__ == "__main__":
     fire.Fire()
     app = QApplication(sys.argv)
     ui = MainWindow()
-
 
     sys.exit(app.exec_())

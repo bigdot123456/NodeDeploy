@@ -26,6 +26,8 @@ class Ui_ConfigNodeNormal(object):
         self.frame.setObjectName("frame")
         self.horizontalSliderDebugInfo = QtWidgets.QSlider(self.frame)
         self.horizontalSliderDebugInfo.setGeometry(QtCore.QRect(40, 30, 361, 22))
+        self.horizontalSliderDebugInfo.setMaximum(5)
+        self.horizontalSliderDebugInfo.setPageStep(2)
         self.horizontalSliderDebugInfo.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSliderDebugInfo.setObjectName("horizontalSliderDebugInfo")
         self.labelNodebugInfo = QtWidgets.QLabel(self.frame)
@@ -89,6 +91,7 @@ class Ui_ConfigNodeNormal(object):
     def retranslateUi(self, ConfigNodeNormal):
         _translate = QtCore.QCoreApplication.translate
         ConfigNodeNormal.setWindowTitle(_translate("ConfigNodeNormal", "节点启动参数配置"))
+        self.horizontalSliderDebugInfo.setToolTip(_translate("ConfigNodeNormal", "设置调试信息输出等级"))
         self.labelNodebugInfo.setText(_translate("ConfigNodeNormal", "无调试信息"))
         self.labelRichDebugInfo.setText(_translate("ConfigNodeNormal", "调试信息丰富"))
         self.checkBoxDebug2File.setToolTip(_translate("ConfigNodeNormal", "调试文件将保存导本地，而不是打印到屏幕"))

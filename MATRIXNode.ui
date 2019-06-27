@@ -105,7 +105,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>抵押对象</string>
+      <string>抵押账户</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="entrustAccount">
@@ -118,7 +118,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>抵押账户（委托账户，当矿工和验证者节点需要使用该账户）填充，切勿输入私钥。</string>
+      <string>挖矿将使用该抵押账户（委托账户，建议临时生成，注意保管密码）填充，切勿输入私钥。</string>
      </property>
     </widget>
     <widget class="QPushButton" name="CloseWallet">
@@ -139,8 +139,8 @@
      <property name="geometry">
       <rect>
        <x>670</x>
-       <y>110</y>
-       <width>111</width>
+       <y>100</y>
+       <width>131</width>
        <height>61</height>
       </rect>
      </property>
@@ -385,28 +385,6 @@
       </property>
      </widget>
     </widget>
-    <widget class="QLabel" name="WalletAddressLabel">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>30</y>
-       <width>581</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="statusTip">
-      <string>请检查账户，谨慎操作</string>
-     </property>
-     <property name="text">
-      <string>当前钱包地址无效,不操作抵押、转账功能时，无需在本区域输入任何值</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_9">
      <property name="geometry">
       <rect>
@@ -501,16 +479,15 @@
     <zorder>ConfirmWalletOP</zorder>
     <zorder>OpenWallet</zorder>
     <zorder>AutoCloseWallet</zorder>
-    <zorder>WalletAddressLabel</zorder>
     <zorder>label_9</zorder>
    </widget>
    <widget class="QFrame" name="frame_2">
     <property name="geometry">
      <rect>
       <x>960</x>
-      <y>20</y>
+      <y>10</y>
       <width>191</width>
-      <height>191</height>
+      <height>114</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -519,89 +496,47 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="StopNode">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>110</y>
-       <width>151</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
-     </property>
-     <property name="text">
-      <string>节点停止工作</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="ResetNode">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>150</y>
-       <width>151</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
-     </property>
-     <property name="text">
-      <string>手动重启节点</string>
-     </property>
-    </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>0</y>
-       <width>171</width>
-       <height>100</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QPushButton" name="DownloadTools">
-        <property name="toolTip">
-         <string>生成命令行，并启动节点</string>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>1 下载必备工具到本地</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="NodeInit">
-        <property name="toolTip">
-         <string>生成命令行，并启动节点</string>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>2 节点初始化</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="NewNodeDepoly">
-        <property name="toolTip">
-         <string>生成命令行，并启动节点</string>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>3 自动化部署观察节点</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="DownloadTools">
+       <property name="toolTip">
+        <string>从MATRIX主页下载文件，并放到当前目录下，下载后自动解压，并放在Work目录下</string>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>1 下载必备工具到本地</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="NodeInit">
+       <property name="toolTip">
+        <string>生成MAN.json文件，只需要运行一次</string>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>2 节点初始化</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="NewNodeDepoly">
+       <property name="toolTip">
+        <string>启动一个观察节点，其中这个节点可以帮助同步，如果不能正确启动，请运行本框内的步骤1和2</string>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>3 自动化部署观察节点</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
    <widget class="QFrame" name="frame_3">
     <property name="geometry">
@@ -628,7 +563,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>检查是否在VIP选举中的黑名单。列入黑名单的原因包括端口不开，不出块等。</string>
      </property>
      <property name="text">
       <string>检查惩罚状态</string>
@@ -644,7 +579,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>检查本节点是否与其它节点联通</string>
      </property>
      <property name="text">
       <string>检查联通性</string>
@@ -660,7 +595,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>检查时钟是否同步，这个是节点不同步或者被列入黑名单的关键</string>
      </property>
      <property name="text">
       <string>检查时钟与NTP状态</string>
@@ -676,7 +611,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>通过IPC或者RPC检查本节点的状态</string>
      </property>
      <property name="text">
       <string>检查节点同步状态</string>
@@ -721,7 +656,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>打开MATRIX主页</string>
      </property>
      <property name="text">
       <string>区块链浏览器预览</string>
@@ -737,7 +672,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>打开钱包</string>
      </property>
      <property name="text">
       <string>在线钱包预览</string>
@@ -747,13 +682,13 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>80</y>
+       <y>70</y>
        <width>151</width>
        <height>32</height>
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>看看你有多少收益</string>
      </property>
      <property name="text">
       <string>个人收益预览</string>
@@ -766,7 +701,7 @@
       <x>20</x>
       <y>310</y>
       <width>921</width>
-      <height>121</height>
+      <height>161</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -805,9 +740,9 @@
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>50</y>
+       <y>70</y>
        <width>771</width>
-       <height>61</height>
+       <height>81</height>
       </rect>
      </property>
     </widget>
@@ -817,8 +752,11 @@
        <x>120</x>
        <y>10</y>
        <width>771</width>
-       <height>31</height>
+       <height>51</height>
       </rect>
+     </property>
+     <property name="statusTip">
+      <string>当前执行的命令，可以copy Paste</string>
      </property>
     </widget>
    </widget>
@@ -826,9 +764,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>440</y>
+      <y>480</y>
       <width>921</width>
-      <height>381</height>
+      <height>351</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -853,7 +791,7 @@
        <x>20</x>
        <y>260</y>
        <width>871</width>
-       <height>111</height>
+       <height>81</height>
       </rect>
      </property>
     </widget>
@@ -921,8 +859,8 @@
      <rect>
       <x>20</x>
       <y>830</y>
-      <width>1131</width>
-      <height>71</height>
+      <width>1081</width>
+      <height>81</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -934,7 +872,7 @@
     <widget class="QPushButton" name="SetDefaultWorkDir">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>10</y>
        <width>81</width>
        <height>51</height>
@@ -951,10 +889,10 @@
     <widget class="QLabel" name="DefaultWorkDirLabel">
      <property name="geometry">
       <rect>
-       <x>110</x>
-       <y>30</y>
-       <width>361</width>
-       <height>20</height>
+       <x>90</x>
+       <y>19</y>
+       <width>421</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -966,7 +904,7 @@
       <rect>
        <x>520</x>
        <y>20</y>
-       <width>561</width>
+       <width>551</width>
        <height>31</height>
       </rect>
      </property>
@@ -977,10 +915,10 @@
     <widget class="QPushButton" name="pushButtonClearLineInput">
      <property name="geometry">
       <rect>
-       <x>1070</x>
-       <y>0</y>
-       <width>61</width>
-       <height>32</height>
+       <x>970</x>
+       <y>50</y>
+       <width>101</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="toolTip">
@@ -1016,7 +954,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>对文本框的内容签名，用于各种特殊应用</string>
      </property>
      <property name="text">
       <string>钱包对输入文本框签名</string>
@@ -1032,7 +970,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>上传本地debug日志</string>
      </property>
      <property name="text">
       <string>上传诊断日志</string>
@@ -1048,7 +986,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>看看是否有新版本GMAN下载</string>
      </property>
      <property name="text">
       <string>GMAN检查更新</string>
@@ -1064,7 +1002,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>下载github源码，然后编译</string>
      </property>
      <property name="text">
       <string>手动编译GMAN</string>
@@ -1080,7 +1018,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>懒得开界面窗口，直接在文本框执行命令</string>
      </property>
      <property name="text">
       <string>执行文本框命令</string>
@@ -1091,9 +1029,9 @@
     <property name="geometry">
      <rect>
       <x>960</x>
-      <y>220</y>
+      <y>130</y>
       <width>191</width>
-      <height>141</height>
+      <height>171</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -1105,14 +1043,14 @@
     <widget class="QPushButton" name="DeployMinerNode">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>90</y>
-       <width>151</width>
-       <height>51</height>
+       <width>177</width>
+       <height>61</height>
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;对抵押账户进行部署，并启动。记得一定选择正确的目录。目前会自动在当前目录下建立work目录，然后进入work 目录工作。&lt;/p&gt;&lt;p&gt;chaindata应当放到work目录下。&lt;/p&gt;&lt;p&gt;如果输入密码不对，会启动失败，一定记得输入正确的密码，或者手动配置后输入key密码.&lt;/p&gt;&lt;p&gt;如果命令不对，一定会闪退！&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="text">
       <string>3 部署挖矿节点
@@ -1122,14 +1060,14 @@
     <widget class="QPushButton" name="GenerateRandomAccountAddress">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>10</y>
-       <width>151</width>
+       <width>177</width>
        <height>41</height>
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>需要启动一个gman程序，然后利用IPC命令获得账户，并自动作为抵押账户，当然也可以手动输入抵押账户</string>
      </property>
      <property name="text">
       <string>1 生成一个随机帐户</string>
@@ -1138,29 +1076,151 @@
     <widget class="QPushButton" name="GenerateEntrustFile">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>50</y>
-       <width>151</width>
+       <width>177</width>
        <height>41</height>
       </rect>
      </property>
      <property name="toolTip">
-      <string>生成命令行，并启动节点</string>
+      <string>对抵押账户的key，生成委托签名，目前用默认密码，对key.json进行加密。
+如果手动输入抵押账户需要自行生成key.json</string>
      </property>
      <property name="text">
       <string>2 生成账户委托签名</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="checkboxManualConfigNode">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>140</y>
+       <width>129</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>手动配置节点参数</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="WalletAddressLabel">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>0</y>
+      <width>1071</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="statusTip">
+     <string>请检查账户，谨慎操作</string>
+    </property>
+    <property name="text">
+     <string>当前钱包地址无效,不操作抵押、转账功能时，无需在本区域输入任何值</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ResetNode">
+    <property name="geometry">
+     <rect>
+      <x>1070</x>
+      <y>310</y>
+      <width>81</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>启动节点，目前直接解析上一次的启动命令，然后杀死老节点，再重启。
+如果更换节点，建议停止，然后选择其它启动方式</string>
+    </property>
+    <property name="text">
+     <string>重启节点</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="StopNode">
+    <property name="geometry">
+     <rect>
+      <x>950</x>
+      <y>310</y>
+      <width>121</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>当启动正式挖矿后，一定要停用自动部署的观察节点。其中生成随机账户需要用到节点启动</string>
+    </property>
+    <property name="text">
+     <string>停止节点
+挖矿必须新启动</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonAbout">
+    <property name="geometry">
+     <rect>
+      <x>1100</x>
+      <y>830</y>
+      <width>71</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>帮助大家使用GMAN</string>
+    </property>
+    <property name="statusTip">
+     <string>提供简单帮助与使用说明，包括节点部署与状态检查</string>
+    </property>
+    <property name="text">
+     <string>Help
+About</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>950</x>
+      <y>0</y>
+      <width>191</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>全新节点，单纯观察和同步</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_11">
+    <property name="geometry">
+     <rect>
+      <x>950</x>
+      <y>120</y>
+      <width>201</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>挖矿节点，如有账户，直接步骤3</string>
+    </property>
    </widget>
    <zorder>frame</zorder>
    <zorder>frame_9</zorder>
    <zorder>frame_8</zorder>
-   <zorder>frame_7</zorder>
    <zorder>frame_6</zorder>
    <zorder>frame_3</zorder>
    <zorder>frame_4</zorder>
    <zorder>frame_2</zorder>
    <zorder>frame_5</zorder>
+   <zorder>WalletAddressLabel</zorder>
+   <zorder>ResetNode</zorder>
+   <zorder>StopNode</zorder>
+   <zorder>pushButtonAbout</zorder>
+   <zorder>label_8</zorder>
+   <zorder>label_11</zorder>
+   <zorder>frame_7</zorder>
   </widget>
  </widget>
  <resources/>

@@ -56,6 +56,15 @@
       <height>22</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>设置调试信息输出等级</string>
+    </property>
+    <property name="maximum">
+     <number>5</number>
+    </property>
+    <property name="pageStep">
+     <number>2</number>
+    </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
     </property>
